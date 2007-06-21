@@ -68,7 +68,7 @@ public class OWLDescriptionEditorViewComponent extends AbstractOWLViewComponent 
         resultsPanel.add(optionsBox, BorderLayout.EAST);
         showSuperClassesCheckBox = new JCheckBox(new AbstractAction("Super classes") {
             public void actionPerformed(ActionEvent e) {
-//                model.setShowSuperClasses(showSuperClassesCheckBox.isSelected());
+                resultsList.setShowSuperClasses(showSuperClassesCheckBox.isSelected());
                 doQuery();
             }
         });
@@ -77,7 +77,7 @@ public class OWLDescriptionEditorViewComponent extends AbstractOWLViewComponent 
 
         showAncestorClassesCheckBox = new JCheckBox(new AbstractAction("Ancestor classes") {
             public void actionPerformed(ActionEvent e) {
-//                model.setShowAncestorClasses(showAncestorClassesCheckBox.isSelected());
+                resultsList.setShowAncestorClasses(showAncestorClassesCheckBox.isSelected());
                 doQuery();
             }
         });
@@ -87,7 +87,7 @@ public class OWLDescriptionEditorViewComponent extends AbstractOWLViewComponent 
 
         showEquivalentClassesCheckBox = new JCheckBox(new AbstractAction("Equivalent classes") {
             public void actionPerformed(ActionEvent e) {
-//                model.setShowEquivalentClasses(showEquivalentClassesCheckBox.isSelected());
+                resultsList.setShowEquivalentClasses(showEquivalentClassesCheckBox.isSelected());
                 doQuery();
             }
         });
@@ -96,7 +96,7 @@ public class OWLDescriptionEditorViewComponent extends AbstractOWLViewComponent 
 
         showSubClassesCheckBox = new JCheckBox(new AbstractAction("Subclasses") {
             public void actionPerformed(ActionEvent e) {
-//                model.setShowSubClasses(showSubClassesCheckBox.isSelected());
+                resultsList.setShowSubClasses(showSubClassesCheckBox.isSelected());
                 doQuery();
             }
         });
@@ -105,7 +105,7 @@ public class OWLDescriptionEditorViewComponent extends AbstractOWLViewComponent 
 
         showDescendantClassesCheckBox = new JCheckBox(new AbstractAction("Descendant classes") {
             public void actionPerformed(ActionEvent e) {
-//                model.setShowDescendantClasses(showDescendantClassesCheckBox.isSelected());
+                resultsList.setShowDescendantClasses(showDescendantClassesCheckBox.isSelected());
                 doQuery();
             }
         });
@@ -115,7 +115,7 @@ public class OWLDescriptionEditorViewComponent extends AbstractOWLViewComponent 
 
         showIndividualsCheckBox = new JCheckBox(new AbstractAction("Individuals") {
             public void actionPerformed(ActionEvent e) {
-//                model.setShowInstances(showIndividualsCheckBox.isSelected());
+                resultsList.setShowInstances(showIndividualsCheckBox.isSelected());
                 doQuery();
             }
         });
@@ -130,13 +130,13 @@ public class OWLDescriptionEditorViewComponent extends AbstractOWLViewComponent 
 
 
     private void updateGUI() {
-//        ResultsTableModel model = (ResultsTableModel) resultsList.getModel();
-//        showSuperClassesCheckBox.setSelected(model.isShowSuperClasses());
-//        showAncestorClassesCheckBox.setSelected(model.isShowAncestorClasses());
-//        showEquivalentClassesCheckBox.setSelected(model.isShowEquivalentClasses());
-//        showSubClassesCheckBox.setSelected(model.isShowSubClasses());
-//        showDescendantClassesCheckBox.setSelected(model.isShowDescendantClasses());
-//        showIndividualsCheckBox.setSelected(model.isShowInstances());
+
+        showSuperClassesCheckBox.setSelected(resultsList.isShowSuperClasses());
+        showAncestorClassesCheckBox.setSelected(resultsList.isShowAncestorClasses());
+        showEquivalentClassesCheckBox.setSelected(resultsList.isShowEquivalentClasses());
+        showSubClassesCheckBox.setSelected(resultsList.isShowSubClasses());
+        showDescendantClassesCheckBox.setSelected(resultsList.isShowDescendantClasses());
+        showIndividualsCheckBox.setSelected(resultsList.isShowInstances());
     }
 
 
