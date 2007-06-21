@@ -13,6 +13,7 @@
         <library id="dlquery" path="classes/" type="code">
             <export prefix="*"/>
         </library>
+        <library id="resources" path="resources/" type="resources"/>
     </runtime>
 
     <extension plugin-id="org.protege.core.application" point-id="WorkspaceTab" id="org.protege.owl.dlquery.DLQueryTab">
