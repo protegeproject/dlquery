@@ -1,0 +1,33 @@
+<?xml version="1.0" ?>
+<!DOCTYPE plugin PUBLIC "-//JPF//Java Plug-in Manifest 0.4" "http://jpf.sourceforge.net/plugin_0_4.dtd">
+
+<plugin id="org.protege.owl.dlquery" version="1.0.3.DL-QueryTab">
+
+    <!-- We require the core protege application plugin -->
+    <requires>
+        <import plugin-id="org.protege.core.application"/>
+        <import plugin-id="org.protege.owl"/>
+    </requires>
+
+    <runtime>
+        <library id="dlquery" path="classes/" type="code">
+            <export prefix="*"/>
+        </library>
+    </runtime>
+
+    <extension plugin-id="org.protege.core.application" point-id="WorkspaceTab" id="org.protege.owl.dlquery.DLQueryTab">
+        <parameter id="label" value="DL Query"/>
+        <parameter id="class" value="org.protege.owl.dlquery.DLQueryTab"/>
+        <parameter id="editorKitId" value="OWLEditorKit"/>
+        <parameter id="index" value="Q"/>
+        <parameter id="defaultViewConfigFileName" value="viewconfig-dlquerytab.xml"/>
+    </extension>
+
+    <extension plugin-id="org.protege.core.application" point-id="ViewComponent"
+               id="org.protege.owl.dlquery.OWLDescriptionEditorViewComponent">
+        <parameter id="label" value="Query"/>
+        <parameter id="class" value="org.protege.owl.dlquery.OWLDescriptionEditorViewComponent"/>
+        <parameter id="headerColor" value="@org.protege.classcolor"/>
+    </extension>
+
+</plugin>
