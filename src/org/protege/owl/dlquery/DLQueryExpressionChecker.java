@@ -1,11 +1,11 @@
-package org.protege.owl.dlquery;
+package org.protege.editor.owl.dlquery;
 
-import org.protege.owl.OWLEditorKit;
-import org.protege.owl.model.description.OWLDescriptionNode;
-import org.protege.owl.model.description.OWLDescriptionNodeParser;
-import org.protege.owl.model.description.OWLDescriptionParser;
-import org.protege.owl.model.description.OWLExpressionParserException;
-import org.protege.owl.ui.clsdescriptioneditor.OWLExpressionChecker;
+import org.protege.editor.owl.OWLEditorKit;
+import org.protege.editor.owl.model.description.OWLDescriptionNode;
+import org.protege.editor.owl.model.description.OWLDescriptionNodeParser;
+import org.protege.editor.owl.model.description.OWLDescriptionParser;
+import org.protege.editor.owl.model.description.OWLExpressionParserException;
+import org.protege.editor.owl.ui.clsdescriptioneditor.OWLExpressionChecker;
 import org.semanticweb.owl.model.OWLException;
 /*
  * Copyright (C) 2007, University of Manchester

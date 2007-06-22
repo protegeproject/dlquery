@@ -1,12 +1,12 @@
-package org.protege.owl.dlquery;
+package org.protege.editor.owl.dlquery;
 
-import org.protege.core.ui.list.MList;
-import org.protege.core.ui.list.MListButton;
-import org.protege.owl.OWLEditorKit;
-import org.protege.owl.ui.OWLDescriptionComparator;
-import org.protege.owl.ui.framelist.ExplainButton;
-import org.protege.owl.ui.renderer.LinkedObjectComponent;
-import org.protege.owl.ui.renderer.LinkedObjectComponentMediator;
+import org.protege.editor.core.ui.list.MList;
+import org.protege.editor.core.ui.list.MListButton;
+import org.protege.editor.owl.OWLEditorKit;
+import org.protege.editor.owl.ui.OWLDescriptionComparator;
+import org.protege.editor.owl.ui.framelist.ExplainButton;
+import org.protege.editor.owl.ui.renderer.LinkedObjectComponent;
+import org.protege.editor.owl.ui.renderer.LinkedObjectComponentMediator;
 import org.semanticweb.owl.inference.OWLReasoner;
 import org.semanticweb.owl.inference.OWLReasonerAdapter;
 import org.semanticweb.owl.inference.OWLReasonerException;

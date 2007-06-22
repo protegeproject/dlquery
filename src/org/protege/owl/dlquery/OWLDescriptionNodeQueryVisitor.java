@@ -1,8 +1,8 @@
-package org.protege.owl.dlquery;
+package org.protege.editor.owl.dlquery;
 
 import org.apache.log4j.Logger;
-import org.protege.owl.model.OWLModelManager;
-import org.protege.owl.model.description.*;
+import org.protege.editor.owl.model.OWLModelManager;
+import org.protege.editor.owl.model.description.*;
 import org.semanticweb.owl.inference.OWLReasoner;
 import org.semanticweb.owl.model.OWLDescription;
 import org.semanticweb.owl.model.OWLObject;

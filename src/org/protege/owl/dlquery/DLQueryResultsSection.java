@@ -1,6 +1,6 @@
-package org.protege.owl.dlquery;
+package org.protege.editor.owl.dlquery;
 
-import org.protege.core.ui.list.MListSectionHeader;
+import org.protege.editor.core.ui.list.MListSectionHeader;
 /*
  * Copyright (C) 2007, University of Manchester
  *

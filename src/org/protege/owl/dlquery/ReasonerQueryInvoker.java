@@ -1,4 +1,4 @@
-package org.protege.owl.dlquery;
+package org.protege.editor.owl.dlquery;
 
 import org.semanticweb.owl.inference.OWLReasoner;
 import org.semanticweb.owl.model.OWLDescription;

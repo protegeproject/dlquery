@@ -1,7 +1,7 @@
-package org.protege.owl.dlquery;
+package org.protege.editor.owl.dlquery;
 
-import org.protege.owl.OWLEditorKit;
-import org.protege.owl.ui.renderer.OWLCellRenderer;
+import org.protege.editor.owl.OWLEditorKit;
+import org.protege.editor.owl.ui.renderer.OWLCellRenderer;
 
 import javax.swing.*;
 import java.awt.*;

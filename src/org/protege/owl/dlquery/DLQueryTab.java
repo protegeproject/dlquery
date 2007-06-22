@@ -1,6 +1,6 @@
-package org.protege.owl.dlquery;
+package org.protege.editor.owl.dlquery;
 
-import org.protege.owl.ui.OWLWorkspaceViewsTab;
+import org.protege.editor.owl.ui.OWLWorkspaceViewsTab;
 /*
  * Copyright (C) 2007, University of Manchester
  *

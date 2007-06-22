@@ -4,13 +4,13 @@
 
         <CNode>
             <Component label="Asserted hierarchy">
-                <Property id="pluginId" value="org.protege.owl.OWLAssertedClassHierarchy"/>
+                <Property id="pluginId" value="org.protege.editor.owl.OWLAssertedClassHierarchy"/>
             </Component>
         </CNode>
 
         <CNode>
             <Component label="DL Query">
-                <Property id="pluginId" value="org.protege.owl.dlquery.OWLDescriptionEditorViewComponent"/>
+                <Property id="pluginId" value="org.protege.editor.owl.dlquery.OWLDescriptionEditorViewComponent"/>
             </Component>
         </CNode>
 

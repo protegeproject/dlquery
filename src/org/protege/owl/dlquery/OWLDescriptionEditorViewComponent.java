@@ -1,10 +1,10 @@
-package org.protege.owl.dlquery;
+package org.protege.editor.owl.dlquery;
 
-import org.protege.core.ui.util.ComponentFactory;
-import org.protege.owl.model.description.OWLDescriptionParser;
-import org.protege.owl.ui.clsdescriptioneditor.ExpressionEditor;
-import org.protege.owl.ui.clsdescriptioneditor.OWLDescriptionChecker;
-import org.protege.owl.ui.view.AbstractOWLViewComponent;
+import org.protege.editor.core.ui.util.ComponentFactory;
+import org.protege.editor.owl.model.description.OWLDescriptionParser;
+import org.protege.editor.owl.ui.clsdescriptioneditor.ExpressionEditor;
+import org.protege.editor.owl.ui.clsdescriptioneditor.OWLDescriptionChecker;
+import org.protege.editor.owl.ui.view.AbstractOWLViewComponent;
 import org.semanticweb.owl.model.OWLDescription;
 import org.semanticweb.owl.model.OWLException;
 
