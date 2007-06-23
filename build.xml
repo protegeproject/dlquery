@@ -1,0 +1,55 @@
+<?xml version = "1.0" encoding = "utf-8"?>
+<project name = "dlquery" default = "compile" basedir = "..">
+
+	<property name = "distribution.jarfile" value = "${dist.dir}/plugins/org.protege.editor.owl.dlquery.jar"/>
+	<property name = "src.dir" value = "${dlquery.dir}/src"/>
+
+	<!-- =================================================================== -->
+	<!-- Classpath declaration - used in the "compile" target -->
+	<!-- =================================================================== -->
+	<path id = "dlquery.classpath">    
+		<filelist refid = "common.libs"/>
+		<path refid = "core.libs"/>
+        <fileset refid = "owl.libs"/>
+		<pathelement location = "${classes.core}"/>
+        <pathelement location = "${classes.owl}"/>
+	</path>
+
+	<!-- =================================================================== -->
+	<!-- INIT -->
+	<!-- =================================================================== -->
+	<target name = "init">
+		<tstamp/>
+		<mkdir dir = "${classes.dlquery}"/>
+	</target>  
+
+	<!-- =================================================================== -->
+	<!-- COMPILE -->
+	<!-- =================================================================== -->
+	<target name = "compile" depends = "init">    
+		<javac srcdir = "${src.dir}" destdir = "${classes.dlquery}" debug="${debug}" source = "${source}" includeAntRuntime = "${includeAntRuntime}">
+			<classpath refid = "dlquery.classpath"/>
+		</javac>
+	</target>
+	
+	<!-- ===================================================================================== -->
+	<!-- JAR - create the distribution JAR file that goes in the JPF "plugins" directory -->
+	<!-- ===================================================================================== -->
+	<target name = "jar" depends = "compile">
+		<jar destfile = "${distribution.jarfile}">
+			<fileset dir = "${dlquery.dir}">
+				<patternset excludes = "src/**">
+					<exclude name = "build.xml"/>
+				</patternset>
+			</fileset>
+		</jar>
+	</target>
+
+	<!-- =================================================================== -->
+	<!-- CLEAN -->
+	<!-- =================================================================== -->
+	<target name = "clean">
+		<delete dir = "${classes.dlquery}"/>
+		<delete dir = "${distribution.dir}"/>
+	</target>
+</project>
