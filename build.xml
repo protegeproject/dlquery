@@ -33,6 +33,23 @@
 	</target>
 	
 	<!-- ===================================================================================== -->
+	<!-- CLASSES-DIST - copy the class files to dist directory - this is a temporary hack because jar file doesn't work -->
+	<!-- ===================================================================================== -->
+	<target name = "classes-dist" depends = "compile">
+
+		<copy todir = "${dist.dir}/plugins/org.coode.dlquery/classes">
+			<fileset dir = "${dlquery.dir}/classes"/>
+		</copy>
+
+		<copy todir = "${dist.dir}/plugins/org.coode.dlquery/resources">
+			<fileset dir = "${dlquery.dir}/resources"/>
+		</copy>
+		
+		<copy file = "${dlquery.dir}/plugin.xml" todir = "${dist.dir}/plugins/org.coode.dlquery"/>
+
+	</target>
+
+	<!-- ===================================================================================== -->
 	<!-- JAR - create the distribution JAR file that goes in the JPF "plugins" directory -->
 	<!-- ===================================================================================== -->
 	<target name = "jar" depends = "compile">
