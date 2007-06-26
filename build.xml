@@ -1,7 +1,7 @@
 <?xml version = "1.0" encoding = "utf-8"?>
 <project name = "dlquery" default = "compile" basedir = "..">
 
-	<property name = "distribution.jarfile" value = "${dist.dir}/plugins/org.protege.editor.owl.dlquery.jar"/>
+	<property name = "distribution.jarfile" value = "${dist.dir}/plugins/org.coode.dlquery.jar"/>
 	<property name = "src.dir" value = "${dlquery.dir}/src"/>
 
 	<!-- =================================================================== -->
