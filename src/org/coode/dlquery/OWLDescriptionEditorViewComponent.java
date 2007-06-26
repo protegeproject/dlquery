@@ -1,4 +1,4 @@
-package org.protege.editor.owl.dlquery;
+package org.coode.dlquery;
 
 import org.protege.editor.core.ui.util.ComponentFactory;
 import org.protege.editor.owl.model.description.OWLDescriptionParser;

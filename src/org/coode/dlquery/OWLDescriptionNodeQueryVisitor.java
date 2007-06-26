@@ -1,4 +1,4 @@
-package org.protege.editor.owl.dlquery;
+package org.coode.dlquery;
 
 import org.apache.log4j.Logger;
 import org.protege.editor.owl.model.OWLModelManager;
