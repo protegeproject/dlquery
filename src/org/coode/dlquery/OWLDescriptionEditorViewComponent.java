@@ -2,6 +2,9 @@ package org.coode.dlquery;
 
 import org.protege.editor.core.ui.util.ComponentFactory;
 import org.protege.editor.owl.model.description.OWLDescriptionParser;
+import org.protege.editor.owl.model.event.EventType;
+import org.protege.editor.owl.model.event.OWLModelManagerChangeEvent;
+import org.protege.editor.owl.model.event.OWLModelManagerListener;
 import org.protege.editor.owl.ui.clsdescriptioneditor.ExpressionEditor;
 import org.protege.editor.owl.ui.clsdescriptioneditor.OWLDescriptionChecker;
 import org.protege.editor.owl.ui.view.AbstractOWLViewComponent;
@@ -61,6 +64,8 @@ public class OWLDescriptionEditorViewComponent extends AbstractOWLViewComponent 
     private JCheckBox showDescendantClassesCheckBox;
 
     private JCheckBox showIndividualsCheckBox;
+
+    private OWLModelManagerListener listener;
 
 
     protected void initialiseOWLView() throws Exception {
@@ -144,11 +149,20 @@ public class OWLDescriptionEditorViewComponent extends AbstractOWLViewComponent 
         });
         optionsBox.add(showIndividualsCheckBox);
         updateGUI();
+        listener = new OWLModelManagerListener() {
+
+            public void handleChange(OWLModelManagerChangeEvent event) {
+                if (event.isType(EventType.ONTOLOGY_CLASSIFIED)) {
+                    doQuery();
+                }
+            }
+        };
+        getOWLModelManager().addListener(listener);
     }
 
 
     protected void disposeOWLView() {
-
+        getOWLModelManager().removeListener(listener);
     }
 
 
@@ -175,33 +189,14 @@ public class OWLDescriptionEditorViewComponent extends AbstractOWLViewComponent 
             String exp = owlDescriptionEditor.getText();
 
             OWLDescriptionParser parser = getOWLModelManager().getOWLDescriptionParser();
-//            if(parser instanceof OWLDescriptionNodeParser) {
-//                if(((OWLDescriptionNodeParser) parser).isWellFormedNode(exp)) {
-//                    OWLDescriptionNode node = ((OWLDescriptionNodeParser) parser).createOWLDescriptionNode(exp);
-//                    handle(node);
-//                }
-//            }
-//            else {
             if (parser.isWellFormed(exp)) {
                 OWLDescription desc = parser.createOWLDescription(exp);
                 resultsList.setOWLDescription(desc);
             }
-//            }
-
         }
         catch (OWLException e) {
             // Don't need to do anything here except disable the execute button
 
         }
     }
-
-//    private void handle(OWLDescriptionNode node) {
-//        System.out.println("Handle: " + node);
-//        try {
-//            resultsList.setOWLDescriptionNode(node);
-//        } catch (OWLException e) {
-//            e.printStackTrace();
-//        }
-//
-//    }
 }
