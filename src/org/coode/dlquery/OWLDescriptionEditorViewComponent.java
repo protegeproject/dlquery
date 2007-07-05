@@ -173,7 +173,6 @@ public class OWLDescriptionEditorViewComponent extends AbstractOWLViewComponent 
             }
 
             String exp = owlDescriptionEditor.getText();
-            System.out.println(exp);
 
             OWLDescriptionParser parser = getOWLModelManager().getOWLDescriptionParser();
 //            if(parser instanceof OWLDescriptionNodeParser) {
@@ -205,5 +204,4 @@ public class OWLDescriptionEditorViewComponent extends AbstractOWLViewComponent 
 //        }
 //
 //    }
-
 }
