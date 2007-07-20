@@ -1,0 +1,18 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: DL Query Tab
+Bundle-SymbolicName: org.coode.dlquery;singleton:=true
+Bundle-Category: protege
+Bundle-Description: A Plugin allowing dl queries in the  Protege OWL Editor
+Bundle-Vendor: Protege Development Team (First working version written a
+ t the University of Manchester by Matthew Horridge)
+Bundle-ClassPath: .
+Import-Package: org.osgi.framework,
+ org.apache.log4j
+Bundle-Version: 1.0.3
+Bundle-Activator: org.protege.editor.core.plugin.DefaultPluginActivator 
+Require-Bundle: org.eclipse.equinox.registry,
+ org.eclipse.equinox.common,
+ org.protege.editor.core.application,
+ org.protege.editor.owl,
+ org.protege.services.owlapi
