@@ -1,10 +1,6 @@
-package org.protege.editor.owl.dlquery;
+package org.coode.dlquery;
 
-import org.semanticweb.owl.inference.OWLReasoner;
-import org.semanticweb.owl.model.OWLDescription;
-import org.semanticweb.owl.model.OWLObject;
-
-import java.util.Set;
+import org.protege.editor.owl.ui.OWLWorkspaceViewsTab;
 /*
  * Copyright (C) 2007, University of Manchester
  *
@@ -33,12 +29,14 @@ import java.util.Set;
  * Author: Matthew Horridge<br>
  * The University Of Manchester<br>
  * Medical Informatics Group<br>
- * Date: 11-Oct-2006<br><br>
+ * Date: 22-Aug-2006<br><br>
  * <p/>
  * matthew.horridge@cs.man.ac.uk<br>
  * www.cs.man.ac.uk/~horridgm<br><br>
  */
-public interface ReasonerQueryInvoker<O extends OWLObject> {
+public class DLQueryTab extends OWLWorkspaceViewsTab {
 
-    public Set<O> getAnswer(OWLReasoner reasoner, OWLDescription description);
+    public void initialise() {
+        super.initialise();
+    }
 }

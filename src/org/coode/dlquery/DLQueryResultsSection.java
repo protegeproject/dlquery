@@ -1,7 +1,6 @@
-package org.protege.editor.owl.dlquery;
+package org.coode.dlquery;
 
-import org.protege.editor.core.ui.list.MListItem;
-import org.semanticweb.owl.model.OWLObject;
+import org.protege.editor.core.ui.list.MListSectionHeader;
 /*
  * Copyright (C) 2007, University of Manchester
  *
@@ -32,46 +31,22 @@ import org.semanticweb.owl.model.OWLObject;
  * Bio-Health Informatics Group<br>
  * Date: 27-Feb-2007<br><br>
  */
-public class DLQueryResultsSectionItem implements MListItem {
+public class DLQueryResultsSection implements MListSectionHeader {
 
-    private OWLObject object;
+    private String label;
 
 
-    public DLQueryResultsSectionItem(OWLObject object) {
-        this.object = object;
+    public DLQueryResultsSection(String label) {
+        this.label = label;
     }
 
 
-    public OWLObject getOWLObject() {
-        return object;
+    public String getName() {
+        return label;
     }
 
 
-    public String toString() {
-        return object.toString();
-    }
-
-
-    public boolean isEditable() {
+    public boolean canAdd() {
         return false;
-    }
-
-
-    public void handleEdit() {
-    }
-
-
-    public boolean isDeleteable() {
-        return false;
-    }
-
-
-    public boolean handleDelete() {
-        return false;
-    }
-
-
-    public String getTooltip() {
-        return null;
     }
 }

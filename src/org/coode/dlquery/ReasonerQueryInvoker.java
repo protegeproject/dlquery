@@ -1,6 +1,10 @@
-package org.protege.editor.owl.dlquery;
+package org.coode.dlquery;
 
-import org.protege.editor.core.ui.list.MListSectionHeader;
+import org.semanticweb.owl.inference.OWLReasoner;
+import org.semanticweb.owl.model.OWLDescription;
+import org.semanticweb.owl.model.OWLObject;
+
+import java.util.Set;
 /*
  * Copyright (C) 2007, University of Manchester
  *
@@ -28,25 +32,13 @@ import org.protege.editor.core.ui.list.MListSectionHeader;
 /**
  * Author: Matthew Horridge<br>
  * The University Of Manchester<br>
- * Bio-Health Informatics Group<br>
- * Date: 27-Feb-2007<br><br>
+ * Medical Informatics Group<br>
+ * Date: 11-Oct-2006<br><br>
+ * <p/>
+ * matthew.horridge@cs.man.ac.uk<br>
+ * www.cs.man.ac.uk/~horridgm<br><br>
  */
-public class DLQueryResultsSection implements MListSectionHeader {
+public interface ReasonerQueryInvoker<O extends OWLObject> {
 
-    private String label;
-
-
-    public DLQueryResultsSection(String label) {
-        this.label = label;
-    }
-
-
-    public String getName() {
-        return label;
-    }
-
-
-    public boolean canAdd() {
-        return false;
-    }
+    public Set<O> getAnswer(OWLReasoner reasoner, OWLDescription description);
 }

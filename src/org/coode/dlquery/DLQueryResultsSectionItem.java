@@ -1,6 +1,7 @@
-package org.protege.editor.owl.dlquery;
+package org.coode.dlquery;
 
-import org.protege.editor.owl.ui.OWLWorkspaceViewsTab;
+import org.protege.editor.core.ui.list.MListItem;
+import org.semanticweb.owl.model.OWLObject;
 /*
  * Copyright (C) 2007, University of Manchester
  *
@@ -28,15 +29,49 @@ import org.protege.editor.owl.ui.OWLWorkspaceViewsTab;
 /**
  * Author: Matthew Horridge<br>
  * The University Of Manchester<br>
- * Medical Informatics Group<br>
- * Date: 22-Aug-2006<br><br>
- * <p/>
- * matthew.horridge@cs.man.ac.uk<br>
- * www.cs.man.ac.uk/~horridgm<br><br>
+ * Bio-Health Informatics Group<br>
+ * Date: 27-Feb-2007<br><br>
  */
-public class DLQueryTab extends OWLWorkspaceViewsTab {
+public class DLQueryResultsSectionItem implements MListItem {
 
-    public void initialise() {
-        super.initialise();
+    private OWLObject object;
+
+
+    public DLQueryResultsSectionItem(OWLObject object) {
+        this.object = object;
+    }
+
+
+    public OWLObject getOWLObject() {
+        return object;
+    }
+
+
+    public String toString() {
+        return object.toString();
+    }
+
+
+    public boolean isEditable() {
+        return false;
+    }
+
+
+    public void handleEdit() {
+    }
+
+
+    public boolean isDeleteable() {
+        return false;
+    }
+
+
+    public boolean handleDelete() {
+        return false;
+    }
+
+
+    public String getTooltip() {
+        return null;
     }
 }

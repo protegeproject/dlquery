@@ -1,4 +1,4 @@
-package org.protege.editor.owl.dlquery;
+package org.coode.dlquery;
 
 import org.protege.editor.owl.OWLEditorKit;
 import org.protege.editor.owl.ui.renderer.OWLCellRenderer;
