@@ -9,7 +9,9 @@
 	<path id = "dlquery.classpath">    
             <path refid="osgi.libs"/>
             <pathelement path="${commonlibs.jar}"/>
+            <path refid="commonlibs.classpath"/>
             <pathelement path="${core.jar}"/>
+            <path refid="core.classpath"/>
             <pathelement path="${owleditor.jar}"/>
             <pathelement path="${owlapi.jar}"/>
 	</path>
