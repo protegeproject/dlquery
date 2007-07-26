@@ -4,8 +4,8 @@ Bundle-Name: DL Query Tab
 Bundle-SymbolicName: org.coode.dlquery;singleton:=true
 Bundle-Category: protege
 Bundle-Description: A Plugin allowing dl queries in the  Protege OWL Editor
-Bundle-Vendor: Protege Development Team (First working version written a
- t the University of Manchester by Matthew Horridge)
+Bundle-Vendor: The CO-ODE Group
+Bundle-DocURL: http://www.co-ode.org
 Bundle-ClassPath: .
 Import-Package: org.osgi.framework,
  org.apache.log4j
