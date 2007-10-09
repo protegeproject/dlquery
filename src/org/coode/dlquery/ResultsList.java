@@ -191,7 +191,7 @@ public class ResultsList extends MList implements LinkedObjectComponent {
 
             if (showInstances) {
                 data.add(new DLQueryResultsSection("Instances"));
-                for (OWLIndividual ind : reasoner.getIndividuals(description, true)) {
+                for (OWLIndividual ind : reasoner.getIndividuals(description, false)) {
                     data.add(new DLQueryResultsSectionItem(ind));
                 }
             }
