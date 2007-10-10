@@ -1,34 +1,21 @@
 <?xml version="1.0" ?>
-<!DOCTYPE plugin PUBLIC "-//JPF//Java Plug-in Manifest 0.4" "http://jpf.sourceforge.net/plugin_0_4.dtd">
 
-<plugin id="org.coode.dlquery" version="1.0.3.DL-QueryTab">
-
-    <!-- We require the core protege application plugin -->
-    <requires>
-        <import plugin-id="org.protege.editor.core.application"/>
-        <import plugin-id="org.protege.editor.owl"/>
-    </requires>
-
-    <runtime>
-        <library id="dlquery" path="classes/" type="code">
-            <export prefix="*"/>
-        </library>
-        <library id="resources" path="resources/" type="resources"/>
-    </runtime>
-
-    <extension plugin-id="org.protege.editor.core.application" point-id="WorkspaceTab" id="org.coode.dlquery.DLQueryTab">
-        <parameter id="label" value="DL Query"/>
-        <parameter id="class" value="org.coode.dlquery.DLQueryTab"/>
-        <parameter id="editorKitId" value="OWLEditorKit"/>
-        <parameter id="index" value="Q"/>
-        <parameter id="defaultViewConfigFileName" value="viewconfig-dlquerytab.xml"/>
+<plugin>
+    
+    <extension id="DLQueryTab"
+               point="org.protege.editor.core.application.WorkspaceTab">
+        <label value="DL Query"/>
+        <class value="org.coode.dlquery.DLQueryTab"/>
+        <editorKitId value="OWLEditorKit"/>
+        <index value="Q"/>
+        <defaultViewConfigFileName value="viewconfig-dlquerytab.xml"/>
     </extension>
 
-    <extension plugin-id="org.protege.editor.core.application" point-id="ViewComponent"
-               id="org.coode.dlquery.OWLDescriptionEditorViewComponent">
-        <parameter id="label" value="Query"/>
-        <parameter id="class" value="org.coode.dlquery.OWLDescriptionEditorViewComponent"/>
-        <parameter id="headerColor" value="@org.protege.classcolor"/>
+    <extension id="OWLDescriptionEditorViewComponent"
+     		   point="org.protege.editor.core.application.ViewComponent">
+        <label value="Query"/>
+        <class value="org.coode.dlquery.OWLDescriptionEditorViewComponent"/>
+        <headerColor value="@org.protege.classcolor"/>
     </extension>
 
 </plugin>

@@ -1,5 +1,6 @@
 package org.coode.dlquery;
 
+import org.apache.log4j.Logger;
 import org.protege.editor.core.ui.util.ComponentFactory;
 import org.protege.editor.owl.model.description.OWLDescriptionParser;
 import org.protege.editor.owl.model.event.EventType;
@@ -48,6 +49,7 @@ import java.awt.event.ActionEvent;
  * www.cs.man.ac.uk/~horridgm<br><br>
  */
 public class OWLDescriptionEditorViewComponent extends AbstractOWLViewComponent {
+    Logger log = Logger.getLogger(OWLDescriptionEditorViewComponent.class);
 
     private ExpressionEditor owlDescriptionEditor;
 
@@ -196,7 +198,10 @@ public class OWLDescriptionEditorViewComponent extends AbstractOWLViewComponent 
         }
         catch (OWLException e) {
             // Don't need to do anything here except disable the execute button
-
+            log.error("Exception caught doing a query " + e);
+            if (log.isDebugEnabled()) {
+                log.debug("Exception caught trying to do the query", e);
+            }
         }
     }
 }
