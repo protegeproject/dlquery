@@ -8,6 +8,7 @@ import org.protege.editor.owl.model.event.OWLModelManagerChangeEvent;
 import org.protege.editor.owl.model.event.OWLModelManagerListener;
 import org.protege.editor.owl.ui.clsdescriptioneditor.ExpressionEditor;
 import org.protege.editor.owl.ui.clsdescriptioneditor.OWLDescriptionChecker;
+import org.protege.editor.owl.ui.frame.InputVerificationStatusChangedListener;
 import org.protege.editor.owl.ui.view.AbstractOWLViewComponent;
 import org.semanticweb.owl.model.OWLDescription;
 import org.semanticweb.owl.model.OWLException;
@@ -69,20 +70,28 @@ public class OWLDescriptionEditorViewComponent extends AbstractOWLViewComponent 
 
     private OWLModelManagerListener listener;
 
+    private JButton executeButton;
+
 
     protected void initialiseOWLView() throws Exception {
         setLayout(new BorderLayout(10, 10));
         JPanel editorPanel = new JPanel(new BorderLayout());
         owlDescriptionEditor = new ExpressionEditor<OWLDescription>(getOWLEditorKit(),
                                                                     new OWLDescriptionChecker(getOWLEditorKit()));
+        owlDescriptionEditor.addStatusChangedListener(new InputVerificationStatusChangedListener(){
+            public void verifiedStatusChanged(boolean newState) {
+                executeButton.setEnabled(newState);
+            }
+        });
         owlDescriptionEditor.setPreferredSize(new Dimension(100, 50));
         editorPanel.add(ComponentFactory.createScrollPane(owlDescriptionEditor), BorderLayout.CENTER);
         JPanel buttonHolder = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        buttonHolder.add(new JButton(new AbstractAction("Execute") {
+        executeButton = new JButton(new AbstractAction("Execute") {
             public void actionPerformed(ActionEvent e) {
                 doQuery();
             }
-        }), BorderLayout.NORTH);
+        });
+        buttonHolder.add(executeButton, BorderLayout.NORTH);
         editorPanel.add(buttonHolder, BorderLayout.SOUTH);
         editorPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(
                 Color.LIGHT_GRAY), "Query (class expression)"), BorderFactory.createEmptyBorder(3, 3, 3, 3)));
@@ -197,8 +206,6 @@ public class OWLDescriptionEditorViewComponent extends AbstractOWLViewComponent 
             }
         }
         catch (OWLException e) {
-            // Don't need to do anything here except disable the execute button
-            log.error("Exception caught doing a query " + e);
             if (log.isDebugEnabled()) {
                 log.debug("Exception caught trying to do the query", e);
             }
