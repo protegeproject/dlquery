@@ -142,7 +142,7 @@ public class ResultsList extends MList implements LinkedObjectComponent {
 
 
     private List<OWLClass> toSortedList(Set<OWLClass> clses) {
-        OWLDescriptionComparator descriptionComparator = new OWLDescriptionComparator(owlEditorKit.getOWLModelManager());
+        OWLDescriptionComparator descriptionComparator = new OWLDescriptionComparator(owlEditorKit.getModelManager());
         List<OWLClass> list = new ArrayList<OWLClass>(clses);
         Collections.sort(list, descriptionComparator);
         return list;
@@ -152,7 +152,7 @@ public class ResultsList extends MList implements LinkedObjectComponent {
     public void setOWLDescription(OWLDescription description) {
         try {
             List data = new ArrayList();
-            OWLReasoner reasoner = owlEditorKit.getOWLModelManager().getReasoner();
+            OWLReasoner reasoner = owlEditorKit.getModelManager().getReasoner();
             if (showEquivalentClasses) {
                 data.add(new DLQueryResultsSection("Equivalent classes"));
                 for (OWLClass cls : toSortedList(reasoner.getEquivalentClasses(description))) {

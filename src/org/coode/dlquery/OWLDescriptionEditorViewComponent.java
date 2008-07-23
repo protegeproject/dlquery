@@ -3,12 +3,11 @@ package org.coode.dlquery;
 import org.apache.log4j.Logger;
 import org.protege.editor.core.ui.util.ComponentFactory;
 import org.protege.editor.core.ui.util.InputVerificationStatusChangedListener;
-import org.protege.editor.owl.model.description.OWLDescriptionParser;
 import org.protege.editor.owl.model.event.EventType;
 import org.protege.editor.owl.model.event.OWLModelManagerChangeEvent;
 import org.protege.editor.owl.model.event.OWLModelManagerListener;
 import org.protege.editor.owl.ui.clsdescriptioneditor.ExpressionEditor;
-import org.protege.editor.owl.ui.clsdescriptioneditor.OWLDescriptionChecker;
+import org.protege.editor.owl.ui.clsdescriptioneditor.OWLExpressionChecker;
 import org.protege.editor.owl.ui.view.AbstractOWLViewComponent;
 import org.semanticweb.owl.model.OWLDescription;
 import org.semanticweb.owl.model.OWLException;
@@ -52,7 +51,7 @@ import java.awt.event.ActionEvent;
 public class OWLDescriptionEditorViewComponent extends AbstractOWLViewComponent {
     Logger log = Logger.getLogger(OWLDescriptionEditorViewComponent.class);
 
-    private ExpressionEditor owlDescriptionEditor;
+    private ExpressionEditor<OWLDescription> owlDescriptionEditor;
 
     private ResultsList resultsList;
 
@@ -75,15 +74,17 @@ public class OWLDescriptionEditorViewComponent extends AbstractOWLViewComponent 
 
     protected void initialiseOWLView() throws Exception {
         setLayout(new BorderLayout(10, 10));
-        JPanel editorPanel = new JPanel(new BorderLayout());
-        owlDescriptionEditor = new ExpressionEditor<OWLDescription>(getOWLEditorKit(),
-                                                                    new OWLDescriptionChecker(getOWLEditorKit()));
+
+        final OWLExpressionChecker<OWLDescription> checker = getOWLEditorKit().getModelManager().getOWLExpressionCheckerFactory().getOWLDescriptionChecker();
+        owlDescriptionEditor = new ExpressionEditor<OWLDescription>(getOWLEditorKit(), checker);
         owlDescriptionEditor.addStatusChangedListener(new InputVerificationStatusChangedListener(){
             public void verifiedStatusChanged(boolean newState) {
                 executeButton.setEnabled(newState);
             }
         });
         owlDescriptionEditor.setPreferredSize(new Dimension(100, 50));
+
+        JPanel editorPanel = new JPanel(new BorderLayout());
         editorPanel.add(ComponentFactory.createScrollPane(owlDescriptionEditor), BorderLayout.CENTER);
         JPanel buttonHolder = new JPanel(new FlowLayout(FlowLayout.LEFT));
         executeButton = new JButton(new AbstractAction("Execute") {
@@ -102,6 +103,7 @@ public class OWLDescriptionEditorViewComponent extends AbstractOWLViewComponent 
                 Color.LIGHT_GRAY), "Query results"), BorderFactory.createEmptyBorder(3, 3, 3, 3)));
         add(resultsPanel);
         resultsList = new ResultsList(getOWLEditorKit());
+        resultsList.setShowSubClasses(true);
         resultsPanel.add(ComponentFactory.createScrollPane(resultsList));
         Box optionsBox = new Box(BoxLayout.Y_AXIS);
         resultsPanel.add(optionsBox, BorderLayout.EAST);
@@ -197,11 +199,8 @@ public class OWLDescriptionEditorViewComponent extends AbstractOWLViewComponent 
                                               JOptionPane.WARNING_MESSAGE);
             }
 
-            String exp = owlDescriptionEditor.getText();
-
-            OWLDescriptionParser parser = getOWLModelManager().getOWLDescriptionParser();
-            if (parser.isWellFormed(exp)) {
-                OWLDescription desc = parser.createOWLDescription(exp);
+            OWLDescription desc = owlDescriptionEditor.createObject();
+            if (desc != null){
                 resultsList.setOWLDescription(desc);
             }
         }
