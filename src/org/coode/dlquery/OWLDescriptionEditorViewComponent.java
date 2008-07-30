@@ -49,6 +49,7 @@ import java.awt.event.ActionEvent;
  * www.cs.man.ac.uk/~horridgm<br><br>
  */
 public class OWLDescriptionEditorViewComponent extends AbstractOWLViewComponent {
+    
     Logger log = Logger.getLogger(OWLDescriptionEditorViewComponent.class);
 
     private ExpressionEditor<OWLDescription> owlDescriptionEditor;
