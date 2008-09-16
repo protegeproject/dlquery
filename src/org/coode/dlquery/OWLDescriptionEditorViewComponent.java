@@ -3,6 +3,7 @@ package org.coode.dlquery;
 import org.apache.log4j.Logger;
 import org.protege.editor.core.ui.util.ComponentFactory;
 import org.protege.editor.core.ui.util.InputVerificationStatusChangedListener;
+import org.protege.editor.owl.model.cache.OWLExpressionUserCache;
 import org.protege.editor.owl.model.event.EventType;
 import org.protege.editor.owl.model.event.OWLModelManagerChangeEvent;
 import org.protege.editor.owl.model.event.OWLModelManagerListener;
@@ -76,7 +77,7 @@ public class OWLDescriptionEditorViewComponent extends AbstractOWLViewComponent 
     protected void initialiseOWLView() throws Exception {
         setLayout(new BorderLayout(10, 10));
 
-        final OWLExpressionChecker<OWLDescription> checker = getOWLEditorKit().getModelManager().getOWLExpressionCheckerFactory().getOWLDescriptionChecker();
+        final OWLExpressionChecker<OWLDescription> checker = getOWLModelManager().getOWLExpressionCheckerFactory().getOWLDescriptionChecker();
         owlDescriptionEditor = new ExpressionEditor<OWLDescription>(getOWLEditorKit(), checker);
         owlDescriptionEditor.addStatusChangedListener(new InputVerificationStatusChangedListener(){
             public void verifiedStatusChanged(boolean newState) {
@@ -202,6 +203,7 @@ public class OWLDescriptionEditorViewComponent extends AbstractOWLViewComponent 
 
             OWLDescription desc = owlDescriptionEditor.createObject();
             if (desc != null){
+                OWLExpressionUserCache.getInstance(getOWLModelManager()).add(desc, owlDescriptionEditor.getText());
                 resultsList.setOWLDescription(desc);
             }
         }
