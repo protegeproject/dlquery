@@ -16,6 +16,8 @@ import org.semanticweb.owl.model.OWLException;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.HierarchyEvent;
+import java.awt.event.HierarchyListener;
 /*
  * Copyright (C) 2007, University of Manchester
  *
@@ -50,7 +52,7 @@ import java.awt.event.ActionEvent;
  * www.cs.man.ac.uk/~horridgm<br><br>
  */
 public class OWLDescriptionEditorViewComponent extends AbstractOWLViewComponent {
-    
+
     Logger log = Logger.getLogger(OWLDescriptionEditorViewComponent.class);
 
     private ExpressionEditor<OWLDescription> owlDescriptionEditor;
@@ -69,13 +71,49 @@ public class OWLDescriptionEditorViewComponent extends AbstractOWLViewComponent 
 
     private JCheckBox showIndividualsCheckBox;
 
+    private JButton executeButton;
+
     private OWLModelManagerListener listener;
 
-    private JButton executeButton;
+    private boolean requiresRefresh = false;
 
 
     protected void initialiseOWLView() throws Exception {
         setLayout(new BorderLayout(10, 10));
+
+        JComponent editorPanel = createQueryPanel();
+        add(editorPanel, BorderLayout.NORTH);
+
+        JComponent resultsPanel = createResultsPanel();
+        add(resultsPanel);
+
+        JComponent optionsBox = createOptionsBox();
+        resultsPanel.add(optionsBox, BorderLayout.EAST);
+
+        updateGUI();
+
+        listener = new OWLModelManagerListener() {
+            public void handleChange(OWLModelManagerChangeEvent event) {
+                if (event.isType(EventType.ONTOLOGY_CLASSIFIED)) {
+                    doQuery();
+                }
+            }
+        };
+
+        getOWLModelManager().addListener(listener);
+
+        addHierarchyListener(new HierarchyListener(){
+            public void hierarchyChanged(HierarchyEvent event) {
+                if (requiresRefresh && isShowing()){
+                    doQuery();
+                }
+            }
+        });
+    }
+
+
+    private JComponent createQueryPanel() {
+        JPanel editorPanel = new JPanel(new BorderLayout());
 
         final OWLExpressionChecker<OWLDescription> checker = getOWLModelManager().getOWLExpressionCheckerFactory().getOWLDescriptionChecker();
         owlDescriptionEditor = new ExpressionEditor<OWLDescription>(getOWLEditorKit(), checker);
@@ -86,7 +124,6 @@ public class OWLDescriptionEditorViewComponent extends AbstractOWLViewComponent 
         });
         owlDescriptionEditor.setPreferredSize(new Dimension(100, 50));
 
-        JPanel editorPanel = new JPanel(new BorderLayout());
         editorPanel.add(ComponentFactory.createScrollPane(owlDescriptionEditor), BorderLayout.CENTER);
         JPanel buttonHolder = new JPanel(new FlowLayout(FlowLayout.LEFT));
         executeButton = new JButton(new AbstractAction("Execute") {
@@ -98,17 +135,23 @@ public class OWLDescriptionEditorViewComponent extends AbstractOWLViewComponent 
         editorPanel.add(buttonHolder, BorderLayout.SOUTH);
         editorPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(
                 Color.LIGHT_GRAY), "Query (class expression)"), BorderFactory.createEmptyBorder(3, 3, 3, 3)));
-        add(editorPanel, BorderLayout.NORTH);
+        return editorPanel;
+    }
 
-        JPanel resultsPanel = new JPanel(new BorderLayout(10, 10));
+
+    private JComponent createResultsPanel() {
+        JComponent resultsPanel = new JPanel(new BorderLayout(10, 10));
         resultsPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(
                 Color.LIGHT_GRAY), "Query results"), BorderFactory.createEmptyBorder(3, 3, 3, 3)));
-        add(resultsPanel);
         resultsList = new ResultsList(getOWLEditorKit());
         resultsList.setShowSubClasses(true);
         resultsPanel.add(ComponentFactory.createScrollPane(resultsList));
+        return resultsPanel;
+    }
+
+
+    private JComponent createOptionsBox() {
         Box optionsBox = new Box(BoxLayout.Y_AXIS);
-        resultsPanel.add(optionsBox, BorderLayout.EAST);
         showSuperClassesCheckBox = new JCheckBox(new AbstractAction("Super classes") {
             public void actionPerformed(ActionEvent e) {
                 resultsList.setShowSuperClasses(showSuperClassesCheckBox.isSelected());
@@ -163,16 +206,8 @@ public class OWLDescriptionEditorViewComponent extends AbstractOWLViewComponent 
             }
         });
         optionsBox.add(showIndividualsCheckBox);
-        updateGUI();
-        listener = new OWLModelManagerListener() {
 
-            public void handleChange(OWLModelManagerChangeEvent event) {
-                if (event.isType(EventType.ONTOLOGY_CLASSIFIED)) {
-                    doQuery();
-                }
-            }
-        };
-        getOWLModelManager().addListener(listener);
+        return optionsBox;
     }
 
 
@@ -182,7 +217,6 @@ public class OWLDescriptionEditorViewComponent extends AbstractOWLViewComponent 
 
 
     private void updateGUI() {
-
         showSuperClassesCheckBox.setSelected(resultsList.isShowSuperClasses());
         showAncestorClassesCheckBox.setSelected(resultsList.isShowAncestorClasses());
         showEquivalentClassesCheckBox.setSelected(resultsList.isShowEquivalentClasses());
@@ -193,24 +227,30 @@ public class OWLDescriptionEditorViewComponent extends AbstractOWLViewComponent 
 
 
     private void doQuery() {
-        try {
-            if (!getOWLModelManager().getReasoner().isClassified()) {
-                JOptionPane.showMessageDialog(this,
-                                              "The reasoner is not syncronised.  This may produce misleading results.",
-                                              "Reasoner out of sync",
-                                              JOptionPane.WARNING_MESSAGE);
-            }
+        if (isShowing()){
+            try {
+                if (!getOWLModelManager().getReasoner().isClassified()) {
+                    JOptionPane.showMessageDialog(this,
+                                                  "The reasoner is not syncronised.  This may produce misleading results.",
+                                                  "Reasoner out of sync",
+                                                  JOptionPane.WARNING_MESSAGE);
+                }
 
-            OWLDescription desc = owlDescriptionEditor.createObject();
-            if (desc != null){
-                OWLExpressionUserCache.getInstance(getOWLModelManager()).add(desc, owlDescriptionEditor.getText());
-                resultsList.setOWLDescription(desc);
+                OWLDescription desc = owlDescriptionEditor.createObject();
+                if (desc != null){
+                    OWLExpressionUserCache.getInstance(getOWLModelManager()).add(desc, owlDescriptionEditor.getText());
+                    resultsList.setOWLDescription(desc);
+                }
             }
+            catch (OWLException e) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Exception caught trying to do the query", e);
+                }
+            }
+            requiresRefresh = false;
         }
-        catch (OWLException e) {
-            if (log.isDebugEnabled()) {
-                log.debug("Exception caught trying to do the query", e);
-            }
+        else{
+            requiresRefresh = true;
         }
     }
 }
