@@ -50,7 +50,6 @@ public class DLQueryListCellRenderer extends OWLCellRenderer {
             renderableValue = item.getOWLObject();
         }
         setPreferredWidth(list.getWidth());
-        setTransparent();
         return super.getListCellRendererComponent(list, renderableValue, index, isSelected, cellHasFocus);
     }
 }
