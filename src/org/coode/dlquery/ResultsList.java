@@ -7,12 +7,17 @@ import org.protege.editor.owl.ui.OWLDescriptionComparator;
 import org.protege.editor.owl.ui.framelist.ExplainButton;
 import org.protege.editor.owl.ui.renderer.LinkedObjectComponent;
 import org.protege.editor.owl.ui.renderer.LinkedObjectComponentMediator;
+import org.protege.editor.owl.ui.view.Copyable;
 import org.semanticweb.owl.inference.OWLReasoner;
 import org.semanticweb.owl.inference.OWLReasonerAdapter;
 import org.semanticweb.owl.inference.OWLReasonerException;
 import org.semanticweb.owl.model.*;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -50,7 +55,7 @@ import java.util.Set;
  * Bio-Health Informatics Group<br>
  * Date: 27-Feb-2007<br><br>
  */
-public class ResultsList extends MList implements LinkedObjectComponent {
+public class ResultsList extends MList implements LinkedObjectComponent, Copyable {
 
     private OWLEditorKit owlEditorKit;
 
@@ -68,6 +73,8 @@ public class ResultsList extends MList implements LinkedObjectComponent {
 
     private LinkedObjectComponentMediator mediator;
 
+    private List<ChangeListener> copyListeners = new ArrayList<ChangeListener>();
+
 
     public ResultsList(OWLEditorKit owlEditorKit) {
         this.owlEditorKit = owlEditorKit;
@@ -78,6 +85,15 @@ public class ResultsList extends MList implements LinkedObjectComponent {
             }
         }));
         mediator = new LinkedObjectComponentMediator(owlEditorKit, this);
+
+        getSelectionModel().addListSelectionListener(new ListSelectionListener(){
+            public void valueChanged(ListSelectionEvent event) {
+                ChangeEvent ev = new ChangeEvent(ResultsList.this);
+                for (ChangeListener l : copyListeners){
+                    l.stateChanged(ev);
+                }
+            }
+        });
     }
 
 
@@ -255,5 +271,31 @@ public class ResultsList extends MList implements LinkedObjectComponent {
 
     public void setLinkedObject(OWLObject object) {
         mediator.setLinkedObject(object);
+    }
+
+
+    public boolean canCopy() {
+        return getSelectedIndices().length > 0;
+    }
+
+
+    public List<OWLObject> getObjectsToCopy() {
+        List<OWLObject> copyObjects = new ArrayList<OWLObject>();
+        for (Object sel : getSelectedValues()){
+            if (sel instanceof DLQueryResultsSectionItem){
+                copyObjects.add(((DLQueryResultsSectionItem)sel).getOWLObject());
+            }
+        }
+        return copyObjects;
+    }
+
+
+    public void addChangeListener(ChangeListener changeListener) {
+        copyListeners.add(changeListener);
+    }
+
+
+    public void removeChangeListener(ChangeListener changeListener) {
+        copyListeners.remove(changeListener);
     }
 }
