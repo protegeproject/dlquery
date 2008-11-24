@@ -4,12 +4,15 @@ import org.apache.log4j.Logger;
 import org.protege.editor.core.ui.util.ComponentFactory;
 import org.protege.editor.core.ui.util.InputVerificationStatusChangedListener;
 import org.protege.editor.owl.model.cache.OWLExpressionUserCache;
+import org.protege.editor.owl.model.entity.OWLEntityCreationSet;
 import org.protege.editor.owl.model.event.EventType;
 import org.protege.editor.owl.model.event.OWLModelManagerChangeEvent;
 import org.protege.editor.owl.model.event.OWLModelManagerListener;
+import org.protege.editor.owl.ui.CreateEquivalentClassPanel;
 import org.protege.editor.owl.ui.clsdescriptioneditor.ExpressionEditor;
 import org.protege.editor.owl.ui.clsdescriptioneditor.OWLExpressionChecker;
 import org.protege.editor.owl.ui.view.AbstractOWLViewComponent;
+import org.semanticweb.owl.model.OWLClass;
 import org.semanticweb.owl.model.OWLDescription;
 import org.semanticweb.owl.model.OWLException;
 
@@ -73,6 +76,8 @@ public class OWLDescriptionEditorViewComponent extends AbstractOWLViewComponent 
 
     private JButton executeButton;
 
+    private JButton addButton;
+
     private OWLModelManagerListener listener;
 
     private boolean requiresRefresh = false;
@@ -120,6 +125,7 @@ public class OWLDescriptionEditorViewComponent extends AbstractOWLViewComponent 
         owlDescriptionEditor.addStatusChangedListener(new InputVerificationStatusChangedListener(){
             public void verifiedStatusChanged(boolean newState) {
                 executeButton.setEnabled(newState);
+                addButton.setEnabled(newState);
             }
         });
         owlDescriptionEditor.setPreferredSize(new Dimension(100, 50));
@@ -131,7 +137,15 @@ public class OWLDescriptionEditorViewComponent extends AbstractOWLViewComponent 
                 doQuery();
             }
         });
-        buttonHolder.add(executeButton, BorderLayout.NORTH);
+
+        addButton = new JButton(new AbstractAction("Add to ontology"){
+            public void actionPerformed(ActionEvent event) {
+                doAdd();
+            }
+        });
+        buttonHolder.add(executeButton);
+        buttonHolder.add(addButton);
+
         editorPanel.add(buttonHolder, BorderLayout.SOUTH);
         editorPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(
                 Color.LIGHT_GRAY), "Query (class expression)"), BorderFactory.createEmptyBorder(3, 3, 3, 3)));
@@ -251,6 +265,23 @@ public class OWLDescriptionEditorViewComponent extends AbstractOWLViewComponent 
         }
         else{
             requiresRefresh = true;
+        }
+    }
+
+
+    private void doAdd() {
+        try {
+            OWLDescription desc = owlDescriptionEditor.createObject();
+            OWLEntityCreationSet<OWLClass> creationSet = CreateEquivalentClassPanel.showDialog(desc, getOWLEditorKit());
+            if (creationSet != null){
+                getOWLModelManager().applyChanges(creationSet.getOntologyChanges());
+                getOWLEditorKit().getOWLWorkspace().getOWLSelectionModel().setSelectedEntity(creationSet.getOWLEntity());                
+            }
+        }
+        catch (OWLException e) {
+            if (log.isDebugEnabled()){
+                log.debug("Exception caught trying to parse DL query", e);
+            }
         }
     }
 }
