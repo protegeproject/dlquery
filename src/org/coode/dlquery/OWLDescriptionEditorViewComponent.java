@@ -8,7 +8,7 @@ import org.protege.editor.owl.model.entity.OWLEntityCreationSet;
 import org.protege.editor.owl.model.event.EventType;
 import org.protege.editor.owl.model.event.OWLModelManagerChangeEvent;
 import org.protege.editor.owl.model.event.OWLModelManagerListener;
-import org.protege.editor.owl.ui.CreateEquivalentClassPanel;
+import org.protege.editor.owl.ui.CreateDefinedClassPanel;
 import org.protege.editor.owl.ui.clsdescriptioneditor.ExpressionEditor;
 import org.protege.editor.owl.ui.clsdescriptioneditor.OWLExpressionChecker;
 import org.protege.editor.owl.ui.view.AbstractOWLViewComponent;
@@ -272,7 +272,7 @@ public class OWLDescriptionEditorViewComponent extends AbstractOWLViewComponent 
     private void doAdd() {
         try {
             OWLDescription desc = owlDescriptionEditor.createObject();
-            OWLEntityCreationSet<OWLClass> creationSet = CreateEquivalentClassPanel.showDialog(desc, getOWLEditorKit());
+            OWLEntityCreationSet<OWLClass> creationSet = CreateDefinedClassPanel.showDialog(desc, getOWLEditorKit());
             if (creationSet != null){
                 getOWLModelManager().applyChanges(creationSet.getOntologyChanges());
                 getOWLEditorKit().getOWLWorkspace().getOWLSelectionModel().setSelectedEntity(creationSet.getOWLEntity());                
