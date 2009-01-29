@@ -87,13 +87,14 @@ public class OWLDescriptionEditorViewComponent extends AbstractOWLViewComponent 
         setLayout(new BorderLayout(10, 10));
 
         JComponent editorPanel = createQueryPanel();
-        add(editorPanel, BorderLayout.NORTH);
-
         JComponent resultsPanel = createResultsPanel();
-        add(resultsPanel);
-
         JComponent optionsBox = createOptionsBox();
         resultsPanel.add(optionsBox, BorderLayout.EAST);
+
+        JSplitPane splitter = new JSplitPane(JSplitPane.VERTICAL_SPLIT, editorPanel, resultsPanel);
+        splitter.setDividerLocation(0.3);
+
+        add(splitter, BorderLayout.CENTER);
 
         updateGUI();
 
