@@ -34,9 +34,15 @@
             </javac>
     </target>
     
+    <!-- =================================================================== -->
+    <!-- BND -->
+    <!-- =================================================================== -->
+
+    <target name = "bnd"/>
+
 
     <!-- ===================================================================================== -->
-    <!-- JAR - create the distribution JAR file that goes in the JPF "plugins" directory -->
+    <!-- JAR - create the distribution JAR file that goes in the OSGi "plugins" directory -->
     <!-- ===================================================================================== -->
     <target name = "bundle" depends = "compile">
             <copy todir="${dlquery.classes}" file="${dlquery.dir}/plugin.xml"/>
