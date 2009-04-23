@@ -13,7 +13,7 @@ import org.protege.editor.owl.ui.clsdescriptioneditor.ExpressionEditor;
 import org.protege.editor.owl.ui.clsdescriptioneditor.OWLExpressionChecker;
 import org.protege.editor.owl.ui.view.AbstractOWLViewComponent;
 import org.semanticweb.owl.model.OWLClass;
-import org.semanticweb.owl.model.OWLDescription;
+import org.semanticweb.owl.model.OWLClassExpression;
 import org.semanticweb.owl.model.OWLException;
 
 import javax.swing.*;
@@ -58,7 +58,7 @@ public class OWLDescriptionEditorViewComponent extends AbstractOWLViewComponent 
 
     Logger log = Logger.getLogger(OWLDescriptionEditorViewComponent.class);
 
-    private ExpressionEditor<OWLDescription> owlDescriptionEditor;
+    private ExpressionEditor<OWLClassExpression> owlDescriptionEditor;
 
     private ResultsList resultsList;
 
@@ -121,8 +121,8 @@ public class OWLDescriptionEditorViewComponent extends AbstractOWLViewComponent 
     private JComponent createQueryPanel() {
         JPanel editorPanel = new JPanel(new BorderLayout());
 
-        final OWLExpressionChecker<OWLDescription> checker = getOWLModelManager().getOWLExpressionCheckerFactory().getOWLDescriptionChecker();
-        owlDescriptionEditor = new ExpressionEditor<OWLDescription>(getOWLEditorKit(), checker);
+        final OWLExpressionChecker<OWLClassExpression> checker = getOWLModelManager().getOWLExpressionCheckerFactory().getOWLDescriptionChecker();
+        owlDescriptionEditor = new ExpressionEditor<OWLClassExpression>(getOWLEditorKit(), checker);
         owlDescriptionEditor.addStatusChangedListener(new InputVerificationStatusChangedListener(){
             public void verifiedStatusChanged(boolean newState) {
                 executeButton.setEnabled(newState);
@@ -251,7 +251,7 @@ public class OWLDescriptionEditorViewComponent extends AbstractOWLViewComponent 
                                                   JOptionPane.WARNING_MESSAGE);
                 }
 
-                OWLDescription desc = owlDescriptionEditor.createObject();
+                OWLClassExpression desc = owlDescriptionEditor.createObject();
                 if (desc != null){
                     OWLExpressionUserCache.getInstance(getOWLModelManager()).add(desc, owlDescriptionEditor.getText());
                     resultsList.setOWLDescription(desc);
@@ -272,7 +272,7 @@ public class OWLDescriptionEditorViewComponent extends AbstractOWLViewComponent 
 
     private void doAdd() {
         try {
-            OWLDescription desc = owlDescriptionEditor.createObject();
+            OWLClassExpression desc = owlDescriptionEditor.createObject();
             OWLEntityCreationSet<OWLClass> creationSet = CreateDefinedClassPanel.showDialog(desc, getOWLEditorKit());
             if (creationSet != null){
                 getOWLModelManager().applyChanges(creationSet.getOntologyChanges());

@@ -1,7 +1,7 @@
 package org.coode.dlquery;
 
 import org.semanticweb.owl.inference.OWLReasoner;
-import org.semanticweb.owl.model.OWLDescription;
+import org.semanticweb.owl.model.OWLClassExpression;
 import org.semanticweb.owl.model.OWLObject;
 
 import java.util.Set;
@@ -40,5 +40,5 @@ import java.util.Set;
  */
 public interface ReasonerQueryInvoker<O extends OWLObject> {
 
-    public Set<O> getAnswer(OWLReasoner reasoner, OWLDescription description);
+    public Set<O> getAnswer(OWLReasoner reasoner, OWLClassExpression description);
 }

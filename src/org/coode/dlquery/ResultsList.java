@@ -163,7 +163,7 @@ public class ResultsList extends MList implements LinkedObjectComponent, Copyabl
     }
 
 
-    public void setOWLDescription(OWLDescription description) {
+    public void setOWLDescription(OWLClassExpression description) {
         try {
             List data = new ArrayList();
             OWLReasoner reasoner = owlEditorKit.getModelManager().getReasoner();

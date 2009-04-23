@@ -4,7 +4,7 @@ import org.apache.log4j.Logger;
 import org.protege.editor.owl.model.OWLModelManager;
 import org.protege.editor.owl.model.description.*;
 import org.semanticweb.owl.inference.OWLReasoner;
-import org.semanticweb.owl.model.OWLDescription;
+import org.semanticweb.owl.model.OWLClassExpression;
 import org.semanticweb.owl.model.OWLObject;
 
 import java.util.HashSet;
@@ -81,7 +81,7 @@ public class OWLDescriptionNodeQueryVisitor<O extends OWLObject> implements OWLD
         Set<O> rightResults = results;
         results = new HashSet<O>();
         results.addAll(leftResults);
-        results.remove(node.getRightNode().getDescription());
+        results.remove(node.getRightNode().getClassExpression());
         results.removeAll(rightResults);
     }
 
@@ -99,9 +99,9 @@ public class OWLDescriptionNodeQueryVisitor<O extends OWLObject> implements OWLD
 
     public void visit(OWLDescriptionNodePossibly node) {
         // LEFTDESC minus not(RIGHTDESC)
-        OWLDescription leftDesc = node.getLeftNode().getDescription();
-        OWLDescription rightDesc = node.getRightNode().getDescription();
-        OWLDescription negRightDesc = owlModelManager.getOWLDataFactory().getOWLObjectComplementOf(rightDesc);
+        OWLClassExpression leftDesc = node.getLeftNode().getClassExpression();
+        OWLClassExpression rightDesc = node.getRightNode().getClassExpression();
+        OWLClassExpression negRightDesc = owlModelManager.getOWLDataFactory().getOWLObjectComplementOf(rightDesc);
 
         Set<O> leftResults = queryInvoker.getAnswer(reasoner, leftDesc);
         Set<O> rightResults = queryInvoker.getAnswer(reasoner, negRightDesc);
@@ -112,6 +112,6 @@ public class OWLDescriptionNodeQueryVisitor<O extends OWLObject> implements OWLD
 
 
     public void visit(OWLDescriptionLeafNode node) {
-        results = queryInvoker.getAnswer(reasoner, node.getDescription());
+        results = queryInvoker.getAnswer(reasoner, node.getClassExpression());
     }
 }
