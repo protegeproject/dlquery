@@ -276,7 +276,9 @@ public class OWLDescriptionEditorViewComponent extends AbstractOWLViewComponent 
             OWLEntityCreationSet<OWLClass> creationSet = CreateDefinedClassPanel.showDialog(desc, getOWLEditorKit());
             if (creationSet != null){
                 getOWLModelManager().applyChanges(creationSet.getOntologyChanges());
-                getOWLEditorKit().getOWLWorkspace().getOWLSelectionModel().setSelectedEntity(creationSet.getOWLEntity());                
+                if (isSynchronizing()){
+                    getOWLEditorKit().getOWLWorkspace().getOWLSelectionModel().setSelectedEntity(creationSet.getOWLEntity());    
+                }
             }
         }
         catch (OWLException e) {
