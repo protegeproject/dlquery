@@ -1,7 +1,7 @@
 package org.coode.dlquery;
 
 import org.protege.editor.core.ui.list.MListItem;
-import org.semanticweb.owl.model.OWLObject;
+import org.semanticweb.owlapi.model.OWLObject;
 /*
  * Copyright (C) 2007, University of Manchester
  *

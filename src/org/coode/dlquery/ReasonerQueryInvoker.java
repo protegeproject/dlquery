@@ -1,8 +1,8 @@
 package org.coode.dlquery;
 
-import org.semanticweb.owl.inference.OWLReasoner;
-import org.semanticweb.owl.model.OWLClassExpression;
-import org.semanticweb.owl.model.OWLObject;
+import org.semanticweb.owlapi.inference.OWLReasoner;
+import org.semanticweb.owlapi.model.OWLClassExpression;
+import org.semanticweb.owlapi.model.OWLObject;
 
 import java.util.Set;
 /*

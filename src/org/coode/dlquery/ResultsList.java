@@ -8,10 +8,10 @@ import org.protege.editor.owl.ui.framelist.ExplainButton;
 import org.protege.editor.owl.ui.renderer.LinkedObjectComponent;
 import org.protege.editor.owl.ui.renderer.LinkedObjectComponentMediator;
 import org.protege.editor.owl.ui.view.Copyable;
-import org.semanticweb.owl.inference.OWLReasoner;
-import org.semanticweb.owl.inference.OWLReasonerAdapter;
-import org.semanticweb.owl.inference.OWLReasonerException;
-import org.semanticweb.owl.model.*;
+import org.semanticweb.owlapi.inference.OWLReasoner;
+import org.semanticweb.owlapi.inference.OWLReasonerAdapter;
+import org.semanticweb.owlapi.inference.OWLReasonerException;
+import org.semanticweb.owlapi.model.*;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -220,7 +220,7 @@ public class ResultsList extends MList implements LinkedObjectComponent, Copyabl
             }
 
             if (showInstances) {
-                final Set<OWLIndividual> results = reasoner.getIndividuals(description, false);
+                final Set<OWLNamedIndividual> results = reasoner.getIndividuals(description, false);
                 data.add(new DLQueryResultsSection("Instances (" + results.size() + ")"));
                 for (OWLIndividual ind : results) {
                     data.add(new DLQueryResultsSectionItem(ind));
