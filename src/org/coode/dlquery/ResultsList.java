@@ -3,7 +3,7 @@ package org.coode.dlquery;
 import org.protege.editor.core.ui.list.MList;
 import org.protege.editor.core.ui.list.MListButton;
 import org.protege.editor.owl.OWLEditorKit;
-import org.protege.editor.owl.ui.OWLDescriptionComparator;
+import org.protege.editor.owl.ui.OWLClassExpressionComparator;
 import org.protege.editor.owl.ui.framelist.ExplainButton;
 import org.protege.editor.owl.ui.renderer.LinkedObjectComponent;
 import org.protege.editor.owl.ui.renderer.LinkedObjectComponentMediator;
@@ -156,14 +156,14 @@ public class ResultsList extends MList implements LinkedObjectComponent, Copyabl
 
 
     private List<OWLClass> toSortedList(Set<OWLClass> clses) {
-        OWLDescriptionComparator descriptionComparator = new OWLDescriptionComparator(owlEditorKit.getModelManager());
+        OWLClassExpressionComparator descriptionComparator = new OWLClassExpressionComparator(owlEditorKit.getModelManager());
         List<OWLClass> list = new ArrayList<OWLClass>(clses);
         Collections.sort(list, descriptionComparator);
         return list;
     }
 
 
-    public void setOWLDescription(OWLClassExpression description) {
+    public void setOWLClassExpression(OWLClassExpression description) {
         try {
             List data = new ArrayList();
             OWLReasoner reasoner = owlEditorKit.getModelManager().getReasoner();

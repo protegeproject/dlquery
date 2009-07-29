@@ -11,10 +11,10 @@
         <defaultViewConfigFileName value="viewconfig-dlquerytab.xml"/>
     </extension>
 
-    <extension id="OWLDescriptionEditorViewComponent"
+    <extension id="OWLClassExpressionEditorViewComponent"
      		   point="org.protege.editor.core.application.ViewComponent">
         <label value="Query"/>
-        <class value="org.coode.dlquery.OWLDescriptionEditorViewComponent"/>
+        <class value="org.coode.dlquery.OWLClassExpressionEditorViewComponent"/>
         <headerColor value="@org.protege.classcolor"/>
     </extension>
 

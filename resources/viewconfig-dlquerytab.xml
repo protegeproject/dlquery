@@ -10,7 +10,7 @@
 
         <CNode>
             <Component label="DL Query">
-                <Property id="pluginId" value="org.coode.dlquery.OWLDescriptionEditorViewComponent"/>
+                <Property id="pluginId" value="org.coode.dlquery.OWLClassExpressionEditorViewComponent"/>
             </Component>
         </CNode>
 
