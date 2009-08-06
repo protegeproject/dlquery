@@ -2,7 +2,7 @@ package org.coode.dlquery;
 
 import org.apache.log4j.Logger;
 import org.protege.editor.owl.model.OWLModelManager;
-import org.protege.editor.owl.model.description.*;
+import org.protege.editor.owl.model.classexpression.*;
 import org.semanticweb.owlapi.inference.OWLReasoner;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLObject;
@@ -42,9 +42,9 @@ import java.util.Set;
  * matthew.horridge@cs.man.ac.uk<br>
  * www.cs.man.ac.uk/~horridgm<br><br>
  */
-public class OWLDescriptionNodeQueryVisitor<O extends OWLObject> implements OWLDescriptionNodeVisitor {
+public class OWLClassExpressionNodeQueryVisitor<O extends OWLObject> implements OWLClassExpressionNodeVisitor {
 
-    private static final Logger logger = Logger.getLogger(OWLDescriptionNodeQueryVisitor.class);
+    private static final Logger logger = Logger.getLogger(OWLClassExpressionNodeQueryVisitor.class);
 
     private OWLModelManager owlModelManager;
 
@@ -55,7 +55,7 @@ public class OWLDescriptionNodeQueryVisitor<O extends OWLObject> implements OWLD
     private Set<O> results;
 
 
-    public OWLDescriptionNodeQueryVisitor(OWLModelManager manager, OWLReasoner reasoner,
+    public OWLClassExpressionNodeQueryVisitor(OWLModelManager manager, OWLReasoner reasoner,
                                           ReasonerQueryInvoker<O> queryInvoker) {
         this.owlModelManager = manager;
         this.reasoner = reasoner;
@@ -74,7 +74,7 @@ public class OWLDescriptionNodeQueryVisitor<O extends OWLObject> implements OWLD
     }
 
 
-    public void visit(OWLDescriptionNodeDifference node) {
+    public void visit(OWLClassExpressionNodeDifference node) {
         node.getLeftNode().accept(this);
         Set<O> leftResults = results;
         node.getRightNode().accept(this);
@@ -86,7 +86,7 @@ public class OWLDescriptionNodeQueryVisitor<O extends OWLObject> implements OWLD
     }
 
 
-    public void visit(OWLDescriptionNodeUnion node) {
+    public void visit(OWLClassExpressionNodeUnion node) {
         node.getLeftNode().accept(this);
         Set<O> leftResults = results;
         node.getRightNode().accept(this);
@@ -97,7 +97,7 @@ public class OWLDescriptionNodeQueryVisitor<O extends OWLObject> implements OWLD
     }
 
 
-    public void visit(OWLDescriptionNodePossibly node) {
+    public void visit(OWLClassExpressionNodePossibly node) {
         // LEFTDESC minus not(RIGHTDESC)
         OWLClassExpression leftDesc = node.getLeftNode().getClassExpression();
         OWLClassExpression rightDesc = node.getRightNode().getClassExpression();
@@ -111,7 +111,7 @@ public class OWLDescriptionNodeQueryVisitor<O extends OWLObject> implements OWLD
     }
 
 
-    public void visit(OWLDescriptionLeafNode node) {
+    public void visit(OWLClassExpressionLeafNode node) {
         results = queryInvoker.getAnswer(reasoner, node.getClassExpression());
     }
 }

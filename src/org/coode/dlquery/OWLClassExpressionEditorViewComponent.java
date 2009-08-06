@@ -54,9 +54,9 @@ import java.awt.event.HierarchyListener;
  * matthew.horridge@cs.man.ac.uk<br>
  * www.cs.man.ac.uk/~horridgm<br><br>
  */
-public class OWLDescriptionEditorViewComponent extends AbstractOWLViewComponent {
+public class OWLClassExpressionEditorViewComponent extends AbstractOWLViewComponent {
 
-    Logger log = Logger.getLogger(OWLDescriptionEditorViewComponent.class);
+    Logger log = Logger.getLogger(OWLClassExpressionEditorViewComponent.class);
 
     private ExpressionEditor<OWLClassExpression> owlDescriptionEditor;
 
@@ -121,7 +121,7 @@ public class OWLDescriptionEditorViewComponent extends AbstractOWLViewComponent 
     private JComponent createQueryPanel() {
         JPanel editorPanel = new JPanel(new BorderLayout());
 
-        final OWLExpressionChecker<OWLClassExpression> checker = getOWLModelManager().getOWLExpressionCheckerFactory().getOWLDescriptionChecker();
+        final OWLExpressionChecker<OWLClassExpression> checker = getOWLModelManager().getOWLExpressionCheckerFactory().getOWLClassExpressionChecker();
         owlDescriptionEditor = new ExpressionEditor<OWLClassExpression>(getOWLEditorKit(), checker);
         owlDescriptionEditor.addStatusChangedListener(new InputVerificationStatusChangedListener(){
             public void verifiedStatusChanged(boolean newState) {
@@ -254,7 +254,7 @@ public class OWLDescriptionEditorViewComponent extends AbstractOWLViewComponent 
                 OWLClassExpression desc = owlDescriptionEditor.createObject();
                 if (desc != null){
                     OWLExpressionUserCache.getInstance(getOWLModelManager()).add(desc, owlDescriptionEditor.getText());
-                    resultsList.setOWLDescription(desc);
+                    resultsList.setOWLClassExpression(desc);
                 }
             }
             catch (OWLException e) {
