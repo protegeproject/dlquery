@@ -1,5 +1,21 @@
 package org.coode.dlquery;
 
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.swing.JComponent;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
 import org.protege.editor.core.ui.list.MList;
 import org.protege.editor.core.ui.list.MListButton;
 import org.protege.editor.owl.OWLEditorKit;
@@ -8,43 +24,15 @@ import org.protege.editor.owl.ui.framelist.ExplainButton;
 import org.protege.editor.owl.ui.renderer.LinkedObjectComponent;
 import org.protege.editor.owl.ui.renderer.LinkedObjectComponentMediator;
 import org.protege.editor.owl.ui.view.Copyable;
-import org.semanticweb.owlapi.inference.OWLReasoner;
-import org.semanticweb.owlapi.inference.OWLReasonerAdapter;
-import org.semanticweb.owlapi.inference.OWLReasonerException;
-import org.semanticweb.owlapi.model.*;
-
-import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.*;
-import java.util.List;
-/*
- * Copyright (C) 2007, University of Manchester
- *
- * Modifications to the initial code base are copyright of their
- * respective authors, or their employers as appropriate.  Authorship
- * of the modifications may be determined from the ChangeLog placed at
- * the end of this file.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
-
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
-
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- */
+import org.semanticweb.owlapi.model.OWLClass;
+import org.semanticweb.owlapi.model.OWLClassExpression;
+import org.semanticweb.owlapi.model.OWLIndividual;
+import org.semanticweb.owlapi.model.OWLNamedIndividual;
+import org.semanticweb.owlapi.model.OWLObject;
+import org.semanticweb.owlapi.model.OWLRuntimeException;
+import org.semanticweb.owlapi.reasoner.Node;
+import org.semanticweb.owlapi.reasoner.OWLReasoner;
+import org.semanticweb.owlapi.reasoner.OWLReasonerException;
 
 
 /**
@@ -164,73 +152,68 @@ public class ResultsList extends MList implements LinkedObjectComponent, Copyabl
 
 
     public void setOWLClassExpression(OWLClassExpression description) {
-        try {
-            List data = new ArrayList();
-            OWLReasoner reasoner = owlEditorKit.getModelManager().getReasoner();
-            if (showEquivalentClasses) {
-                final List<OWLClass> results = toSortedList(reasoner.getEquivalentClasses(description));
-                data.add(new DLQueryResultsSection("Equivalent classes (" + results.size() + ")"));
-                for (OWLClass cls : results) {
-                    data.add(new DLQueryResultsSectionItem(cls));
+        List<Object> data = new ArrayList<Object>();
+        OWLReasoner reasoner = owlEditorKit.getModelManager().getReasoner();
+        if (showEquivalentClasses) {
+            final List<OWLClass> results = toSortedList(reasoner.getEquivalentClasses(description).getEntities());
+            data.add(new DLQueryResultsSection("Equivalent classes (" + results.size() + ")"));
+            for (OWLClass cls : results) {
+                data.add(new DLQueryResultsSectionItem(cls));
+            }
+        }
+        if (showAncestorClasses) {
+            final List<OWLClass> results = toSortedList(reasoner.getSuperClasses(description, false).getFlattened());
+            data.add(new DLQueryResultsSection("Ancestor classes (" + results.size() + ")"));
+            for (OWLClass superClass : results) {
+                data.add(new DLQueryResultsSectionItem(superClass));
+            }
+        }
+        if (showSuperClasses) {
+            final List<OWLClass> results = toSortedList(reasoner.getSuperClasses(description, true).getFlattened());
+            data.add(new DLQueryResultsSection("Super classes (" + results.size() + ")"));
+            for (OWLClass superClass : results) {
+                data.add(new DLQueryResultsSectionItem(superClass));
+            }
+        }
+        if (showSubClasses) {
+            // flatten and filter out owl:Nothing
+            OWLClass owlNothing = owlEditorKit.getOWLModelManager().getOWLDataFactory().getOWLNothing();
+            final Set<OWLClass> resultSet = new HashSet<OWLClass>();
+            for (Node<OWLClass> clsSet : reasoner.getSubClasses(description, true)){
+                if (!clsSet.contains(owlNothing)){
+                    resultSet.addAll(clsSet.getEntities());
                 }
             }
-            if (showAncestorClasses) {
-                final List<OWLClass> results = toSortedList(OWLReasonerAdapter.flattenSetOfSets(reasoner.getAncestorClasses(description)));
-                data.add(new DLQueryResultsSection("Ancestor classes (" + results.size() + ")"));
-                for (OWLClass superClass : results) {
-                    data.add(new DLQueryResultsSectionItem(superClass));
+            final List<OWLClass> results = toSortedList(resultSet);
+            data.add(new DLQueryResultsSection("Sub classes (" + results.size() + ")"));
+            for (OWLClass subClass : results) {
+                data.add(new DLQueryResultsSectionItem(subClass));
+            }
+        }
+        if (showDescendantClasses) {
+            // flatten and filter out owl:Nothing
+            OWLClass owlNothing = owlEditorKit.getOWLModelManager().getOWLDataFactory().getOWLNothing();
+            final Set<OWLClass> resultSet = new HashSet<OWLClass>();
+            for (Node<OWLClass> clsSet : reasoner.getSubClasses(description, false)){
+                if (!clsSet.contains(owlNothing)){
+                    resultSet.addAll(clsSet.getEntities());
                 }
             }
-            if (showSuperClasses) {
-                final List<OWLClass> results = toSortedList(OWLReasonerAdapter.flattenSetOfSets(reasoner.getSuperClasses(description)));
-                data.add(new DLQueryResultsSection("Super classes (" + results.size() + ")"));
-                for (OWLClass superClass : results) {
-                    data.add(new DLQueryResultsSectionItem(superClass));
-                }
+            final List<OWLClass> results = toSortedList(resultSet);
+            data.add(new DLQueryResultsSection("Descendant classes (" + results.size() + ")"));
+            for (OWLClass cls : results) {
+                data.add(new DLQueryResultsSectionItem(cls));
             }
-            if (showSubClasses) {
-                // flatten and filter out owl:Nothing
-                OWLClass owlNothing = owlEditorKit.getOWLModelManager().getOWLDataFactory().getOWLNothing();
-                final Set<OWLClass> resultSet = new HashSet<OWLClass>();
-                for (Set<OWLClass> clsSet : reasoner.getSubClasses(description)){
-                    if (!clsSet.contains(owlNothing)){
-                        resultSet.addAll(clsSet);
-                    }
-                }
-                final List<OWLClass> results = toSortedList(resultSet);
-                data.add(new DLQueryResultsSection("Sub classes (" + results.size() + ")"));
-                for (OWLClass subClass : results) {
-                    data.add(new DLQueryResultsSectionItem(subClass));
-                }
-            }
-            if (showDescendantClasses) {
-                // flatten and filter out owl:Nothing
-                OWLClass owlNothing = owlEditorKit.getOWLModelManager().getOWLDataFactory().getOWLNothing();
-                final Set<OWLClass> resultSet = new HashSet<OWLClass>();
-                for (Set<OWLClass> clsSet : reasoner.getDescendantClasses(description)){
-                    if (!clsSet.contains(owlNothing)){
-                        resultSet.addAll(clsSet);
-                    }
-                }
-                final List<OWLClass> results = toSortedList(resultSet);
-                data.add(new DLQueryResultsSection("Descendant classes (" + results.size() + ")"));
-                for (OWLClass cls : results) {
-                    data.add(new DLQueryResultsSectionItem(cls));
-                }
-            }
+        }
 
-            if (showInstances) {
-                final Set<OWLNamedIndividual> results = reasoner.getIndividuals(description, false);
-                data.add(new DLQueryResultsSection("Instances (" + results.size() + ")"));
-                for (OWLIndividual ind : results) {
-                    data.add(new DLQueryResultsSectionItem(ind));
-                }
+        if (showInstances) {
+            final Set<OWLNamedIndividual> results = reasoner.getInstances(description, true).getFlattened();
+            data.add(new DLQueryResultsSection("Instances (" + results.size() + ")"));
+            for (OWLIndividual ind : results) {
+                data.add(new DLQueryResultsSectionItem(ind));
             }
-            setListData(data.toArray());
         }
-        catch (OWLReasonerException e) {
-            throw new OWLRuntimeException(e);
-        }
+        setListData(data.toArray());
     }
 
 

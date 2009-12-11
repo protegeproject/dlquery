@@ -244,7 +244,7 @@ public class OWLClassExpressionEditorViewComponent extends AbstractOWLViewCompon
     private void doQuery() {
         if (isShowing()){
             try {
-                if (!getOWLModelManager().getReasoner().isClassified()) {
+                if (!getOWLModelManager().getOWLReasonerManager().isClassified()) {
                     JOptionPane.showMessageDialog(this,
                                                   "The reasoner is not syncronised.  This may produce misleading results.",
                                                   "Reasoner out of sync",
