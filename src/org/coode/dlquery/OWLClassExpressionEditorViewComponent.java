@@ -196,6 +196,8 @@ public class OWLClassExpressionEditorViewComponent extends AbstractOWLViewCompon
         optionsBox.add(Box.createVerticalStrut(3));
 
         showSubClassesCheckBox = new JCheckBox(new AbstractAction("Subclasses") {
+            private static final long serialVersionUID = 696913194074753412L;
+
             public void actionPerformed(ActionEvent e) {
                 resultsList.setShowSubClasses(showSubClassesCheckBox.isSelected());
                 doQuery();
@@ -205,6 +207,8 @@ public class OWLClassExpressionEditorViewComponent extends AbstractOWLViewCompon
         optionsBox.add(Box.createVerticalStrut(3));
 
         showDescendantClassesCheckBox = new JCheckBox(new AbstractAction("Descendant classes") {
+            private static final long serialVersionUID = -3418802363566640471L;
+
             public void actionPerformed(ActionEvent e) {
                 resultsList.setShowDescendantClasses(showDescendantClassesCheckBox.isSelected());
                 doQuery();
