@@ -56,6 +56,11 @@ import java.awt.event.HierarchyListener;
  */
 public class OWLClassExpressionEditorViewComponent extends AbstractOWLViewComponent {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 8268241587271333587L;
+
     Logger log = Logger.getLogger(OWLClassExpressionEditorViewComponent.class);
 
     private ExpressionEditor<OWLClassExpression> owlDescriptionEditor;
@@ -134,12 +139,22 @@ public class OWLClassExpressionEditorViewComponent extends AbstractOWLViewCompon
         editorPanel.add(ComponentFactory.createScrollPane(owlDescriptionEditor), BorderLayout.CENTER);
         JPanel buttonHolder = new JPanel(new FlowLayout(FlowLayout.LEFT));
         executeButton = new JButton(new AbstractAction("Execute") {
+            /**
+             * 
+             */
+            private static final long serialVersionUID = -1833321282125901561L;
+
             public void actionPerformed(ActionEvent e) {
                 doQuery();
             }
         });
 
         addButton = new JButton(new AbstractAction("Add to ontology"){
+            /**
+             * 
+             */
+            private static final long serialVersionUID = -6050625862820344594L;
+
             public void actionPerformed(ActionEvent event) {
                 doAdd();
             }
@@ -168,6 +183,11 @@ public class OWLClassExpressionEditorViewComponent extends AbstractOWLViewCompon
     private JComponent createOptionsBox() {
         Box optionsBox = new Box(BoxLayout.Y_AXIS);
         showSuperClassesCheckBox = new JCheckBox(new AbstractAction("Super classes") {
+            /**
+             * 
+             */
+            private static final long serialVersionUID = 1531417504526875891L;
+
             public void actionPerformed(ActionEvent e) {
                 resultsList.setShowSuperClasses(showSuperClassesCheckBox.isSelected());
                 doQuery();
@@ -177,6 +197,11 @@ public class OWLClassExpressionEditorViewComponent extends AbstractOWLViewCompon
         optionsBox.add(Box.createVerticalStrut(3));
 
         showAncestorClassesCheckBox = new JCheckBox(new AbstractAction("Ancestor classes") {
+            /**
+             * 
+             */
+            private static final long serialVersionUID = 4603049796331219219L;
+
             public void actionPerformed(ActionEvent e) {
                 resultsList.setShowAncestorClasses(showAncestorClassesCheckBox.isSelected());
                 doQuery();
@@ -187,6 +212,11 @@ public class OWLClassExpressionEditorViewComponent extends AbstractOWLViewCompon
         optionsBox.add(Box.createVerticalStrut(3));
 
         showEquivalentClassesCheckBox = new JCheckBox(new AbstractAction("Equivalent classes") {
+            /**
+             * 
+             */
+            private static final long serialVersionUID = -3766966095409342054L;
+
             public void actionPerformed(ActionEvent e) {
                 resultsList.setShowEquivalentClasses(showEquivalentClassesCheckBox.isSelected());
                 doQuery();
@@ -219,6 +249,11 @@ public class OWLClassExpressionEditorViewComponent extends AbstractOWLViewCompon
         optionsBox.add(Box.createVerticalStrut(3));
 
         showIndividualsCheckBox = new JCheckBox(new AbstractAction("Individuals") {
+            /**
+             * 
+             */
+            private static final long serialVersionUID = -7727032635999833150L;
+
             public void actionPerformed(ActionEvent e) {
                 resultsList.setShowInstances(showIndividualsCheckBox.isSelected());
                 doQuery();

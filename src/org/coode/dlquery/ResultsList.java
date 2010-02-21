@@ -41,6 +41,11 @@ import org.semanticweb.owlapi.reasoner.OWLReasoner;
  */
 public class ResultsList extends MList implements LinkedObjectComponent, Copyable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 8184853513690586368L;
+
     private OWLEditorKit owlEditorKit;
 
     private boolean showSuperClasses;
