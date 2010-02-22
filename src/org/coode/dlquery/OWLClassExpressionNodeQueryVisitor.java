@@ -3,7 +3,6 @@ package org.coode.dlquery;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.protege.editor.owl.model.OWLModelManager;
 import org.protege.editor.owl.model.classexpression.OWLClassExpressionLeafNode;
 import org.protege.editor.owl.model.classexpression.OWLClassExpressionNodeDifference;
@@ -25,9 +24,6 @@ import org.semanticweb.owlapi.reasoner.OWLReasoner;
  * www.cs.man.ac.uk/~horridgm<br><br>
  */
 public class OWLClassExpressionNodeQueryVisitor<O extends OWLObject> implements OWLClassExpressionNodeVisitor {
-
-    private static final Logger logger = Logger.getLogger(OWLClassExpressionNodeQueryVisitor.class);
-
     private OWLModelManager owlModelManager;
 
     private OWLReasoner reasoner;
