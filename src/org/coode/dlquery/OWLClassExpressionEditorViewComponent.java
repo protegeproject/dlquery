@@ -55,10 +55,6 @@ import java.awt.event.HierarchyListener;
  * www.cs.man.ac.uk/~horridgm<br><br>
  */
 public class OWLClassExpressionEditorViewComponent extends AbstractOWLViewComponent {
-
-    /**
-     * 
-     */
     private static final long serialVersionUID = 8268241587271333587L;
 
     Logger log = Logger.getLogger(OWLClassExpressionEditorViewComponent.class);
