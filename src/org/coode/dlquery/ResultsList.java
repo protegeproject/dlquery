@@ -224,13 +224,12 @@ public class ResultsList extends MList implements LinkedObjectComponent, Copyabl
 
 
     protected List<MListButton> getButtons(Object value) {
-        // TODO: Would be nice :)
-//        if (value instanceof DLQueryResultsSectionItem) {
-//            return explainButton;
-//        }
-//        else {
-        return Collections.emptyList();
-//        }
+        if (value instanceof DLQueryResultsSectionItem) {
+            return explainButton;
+        }
+        else {
+            return Collections.emptyList();
+        }
     }
 
 
