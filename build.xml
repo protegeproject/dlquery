@@ -48,6 +48,8 @@
      <tstamp>
        <format property="build.time" pattern="yyyy_MM_dd_hhmm"/>
      </tstamp>
+     <property name="bundle.version"
+               value="${major.version}.${minor.version}.${micro.version}.${build.time}"/>
      <mkdir dir = "${build}"/>
      <mkdir dir = "${classes}"/>
      <mkdir dir = "${genlib}"/>
@@ -174,11 +176,26 @@
      <manifest file="${manifest}" 
                mode = "update">
         <attribute name="Built-By" value = "${user.name}"/>
-        <attribute name="Bundle-Version" value="${major.version}.${minor.version}.${micro.version}.${build.time}"/>
+        <attribute name="Bundle-Version" value="${bundle.version}"/>
      </manifest>
    </target>
 
-   <target name = "jar" depends = "compile, copy.resources">
+   <target name = "create.update.properties" depends="init">
+       <property name="dlquery-update.properties.file"
+                 location="${build}/dlquery-update.properties"/>
+       <echo file="${dlquery-update.properties.file}" append="false">
+id=${plugin}
+version=${bundle.version}
+download=http://smi-protege.stanford.edu/protege4/plugins/4.1/${plugin}.jar
+name=DL Query Plugin
+readme=http://smi-protege.stanford.edu/protege4/plugins/4.1/dlquery-readme.html
+license=http://www.gnu.org/licenses/lgpl.html
+author=Matthew Horridge for the CO-ODE project
+       </echo>
+   </target>
+
+
+   <target name = "jar" depends = "compile, copy.resources,create.update.properties">
      <jar jarfile = "${build}/${plugin}.jar"
           basedir = "${classes}" 
           manifest = "${build}/manifest.mf"/>
