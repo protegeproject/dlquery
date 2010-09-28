@@ -210,7 +210,7 @@ public class ResultsList extends MList implements LinkedObjectComponent, Copyabl
         }
 
         if (showInstances) {
-            final Set<OWLNamedIndividual> results = reasoner.getInstances(description, true).getFlattened();
+            final Set<OWLNamedIndividual> results = reasoner.getInstances(description, false).getFlattened();
             data.add(new DLQueryResultsSection("Instances (" + results.size() + ")"));
             for (OWLIndividual ind : results) {
                 data.add(new DLQueryResultsSectionItem(ind));
