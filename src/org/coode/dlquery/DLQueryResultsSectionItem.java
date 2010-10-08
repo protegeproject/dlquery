@@ -1,6 +1,7 @@
 package org.coode.dlquery;
 
 import org.protege.editor.core.ui.list.MListItem;
+import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLObject;
 /*
  * Copyright (C) 2007, University of Manchester
@@ -35,16 +36,22 @@ import org.semanticweb.owlapi.model.OWLObject;
 public class DLQueryResultsSectionItem implements MListItem {
 
     private OWLObject object;
+    private OWLAxiom  axiom;
 
 
-    public DLQueryResultsSectionItem(OWLObject object) {
+    public DLQueryResultsSectionItem(OWLObject object, OWLAxiom axiom) {
         this.object = object;
+        this.axiom  = axiom;
     }
 
 
     public OWLObject getOWLObject() {
         return object;
     }
+    
+    public OWLAxiom getAxiom() {
+		return axiom;
+	}
 
 
     public String toString() {

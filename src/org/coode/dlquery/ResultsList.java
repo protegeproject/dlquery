@@ -1,5 +1,6 @@
 package org.coode.dlquery;
 
+import java.awt.Frame;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.swing.JComponent;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
@@ -20,12 +22,15 @@ import org.protege.editor.core.ui.list.MList;
 import org.protege.editor.core.ui.list.MListButton;
 import org.protege.editor.owl.OWLEditorKit;
 import org.protege.editor.owl.ui.OWLClassExpressionComparator;
+import org.protege.editor.owl.ui.explanation.ExplanationManager;
 import org.protege.editor.owl.ui.framelist.ExplainButton;
 import org.protege.editor.owl.ui.renderer.LinkedObjectComponent;
 import org.protege.editor.owl.ui.renderer.LinkedObjectComponentMediator;
 import org.protege.editor.owl.ui.view.Copyable;
+import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;
+import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObject;
@@ -68,11 +73,6 @@ public class ResultsList extends MList implements LinkedObjectComponent, Copyabl
     public ResultsList(OWLEditorKit owlEditorKit) {
         this.owlEditorKit = owlEditorKit;
         setCellRenderer(new DLQueryListCellRenderer(owlEditorKit));
-        explainButton.add(new ExplainButton(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-
-            }
-        }));
         mediator = new LinkedObjectComponentMediator(owlEditorKit, this);
 
         getSelectionModel().addListSelectionListener(new ListSelectionListener(){
@@ -156,26 +156,27 @@ public class ResultsList extends MList implements LinkedObjectComponent, Copyabl
 
     public void setOWLClassExpression(OWLClassExpression description) {
         List<Object> data = new ArrayList<Object>();
+        OWLDataFactory factory = owlEditorKit.getOWLModelManager().getOWLDataFactory();
         OWLReasoner reasoner = owlEditorKit.getModelManager().getReasoner();
         if (showEquivalentClasses) {
             final List<OWLClass> results = toSortedList(reasoner.getEquivalentClasses(description).getEntities());
             data.add(new DLQueryResultsSection("Equivalent classes (" + results.size() + ")"));
             for (OWLClass cls : results) {
-                data.add(new DLQueryResultsSectionItem(cls));
+                data.add(new DLQueryResultsSectionItem(cls, factory.getOWLEquivalentClassesAxiom(description, cls)));
             }
         }
         if (showAncestorClasses) {
             final List<OWLClass> results = toSortedList(reasoner.getSuperClasses(description, false).getFlattened());
             data.add(new DLQueryResultsSection("Ancestor classes (" + results.size() + ")"));
             for (OWLClass superClass : results) {
-                data.add(new DLQueryResultsSectionItem(superClass));
+                data.add(new DLQueryResultsSectionItem(superClass, factory.getOWLSubClassOfAxiom(description, superClass)));
             }
         }
         if (showSuperClasses) {
             final List<OWLClass> results = toSortedList(reasoner.getSuperClasses(description, true).getFlattened());
             data.add(new DLQueryResultsSection("Super classes (" + results.size() + ")"));
             for (OWLClass superClass : results) {
-                data.add(new DLQueryResultsSectionItem(superClass));
+                data.add(new DLQueryResultsSectionItem(superClass, factory.getOWLSubClassOfAxiom(description, superClass)));
             }
         }
         if (showSubClasses) {
@@ -190,7 +191,7 @@ public class ResultsList extends MList implements LinkedObjectComponent, Copyabl
             final List<OWLClass> results = toSortedList(resultSet);
             data.add(new DLQueryResultsSection("Sub classes (" + results.size() + ")"));
             for (OWLClass subClass : results) {
-                data.add(new DLQueryResultsSectionItem(subClass));
+                data.add(new DLQueryResultsSectionItem(subClass, factory.getOWLSubClassOfAxiom(subClass, description)));
             }
         }
         if (showDescendantClasses) {
@@ -205,7 +206,7 @@ public class ResultsList extends MList implements LinkedObjectComponent, Copyabl
             final List<OWLClass> results = toSortedList(resultSet);
             data.add(new DLQueryResultsSection("Descendant classes (" + results.size() + ")"));
             for (OWLClass cls : results) {
-                data.add(new DLQueryResultsSectionItem(cls));
+                data.add(new DLQueryResultsSectionItem(cls, factory.getOWLSubClassOfAxiom(cls, description)));
             }
         }
 
@@ -213,19 +214,24 @@ public class ResultsList extends MList implements LinkedObjectComponent, Copyabl
             final Set<OWLNamedIndividual> results = reasoner.getInstances(description, false).getFlattened();
             data.add(new DLQueryResultsSection("Instances (" + results.size() + ")"));
             for (OWLIndividual ind : results) {
-                data.add(new DLQueryResultsSectionItem(ind));
+                data.add(new DLQueryResultsSectionItem(ind, factory.getOWLClassAssertionAxiom(description, ind)));
             }
         }
         setListData(data.toArray());
     }
 
 
-    private List<MListButton> explainButton = new ArrayList<MListButton>();
-
-
     protected List<MListButton> getButtons(Object value) {
         if (value instanceof DLQueryResultsSectionItem) {
-            return explainButton;
+        	final OWLAxiom axiom = ((DLQueryResultsSectionItem) value).getAxiom();
+        	List<MListButton> buttons = new ArrayList<MListButton>();
+        	buttons.add(new ExplainButton(new ActionListener() {
+            	public void actionPerformed(ActionEvent e) {
+            		ExplanationManager em = owlEditorKit.getOWLModelManager().getExplanationManager();
+            		em.handleExplain((Frame) SwingUtilities.getAncestorOfClass(Frame.class, ResultsList.this), axiom);
+            	}
+            }));
+            return buttons;
         }
         else {
             return Collections.emptyList();

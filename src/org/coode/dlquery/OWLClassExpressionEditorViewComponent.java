@@ -8,6 +8,7 @@ import org.protege.editor.owl.model.entity.OWLEntityCreationSet;
 import org.protege.editor.owl.model.event.EventType;
 import org.protege.editor.owl.model.event.OWLModelManagerChangeEvent;
 import org.protege.editor.owl.model.event.OWLModelManagerListener;
+import org.protege.editor.owl.model.inference.NoOpReasoner;
 import org.protege.editor.owl.ui.CreateDefinedClassPanel;
 import org.protege.editor.owl.ui.clsdescriptioneditor.ExpressionEditor;
 import org.protege.editor.owl.ui.clsdescriptioneditor.OWLExpressionChecker;
@@ -279,7 +280,13 @@ public class OWLClassExpressionEditorViewComponent extends AbstractOWLViewCompon
     private void doQuery() {
         if (isShowing()){
             try {
-                if (!getOWLModelManager().getOWLReasonerManager().isClassified()) {
+            	if (getOWLModelManager().getReasoner() instanceof NoOpReasoner) {
+                    JOptionPane.showMessageDialog(this,
+                            "Please initialize the reasoner",
+                            "No Reasoner",
+                            JOptionPane.WARNING_MESSAGE);
+            	}
+            	else if (!getOWLModelManager().getOWLReasonerManager().isClassified()) {
                     JOptionPane.showMessageDialog(this,
                                                   "The reasoner is not syncronised.  This may produce misleading results.",
                                                   "Reasoner out of sync",
