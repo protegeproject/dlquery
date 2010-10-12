@@ -1,5 +1,24 @@
 package org.coode.dlquery;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.HierarchyEvent;
+import java.awt.event.HierarchyListener;
+
+import javax.swing.AbstractAction;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JSplitPane;
+
 import org.apache.log4j.Logger;
 import org.protege.editor.core.ui.util.ComponentFactory;
 import org.protege.editor.core.ui.util.InputVerificationStatusChangedListener;
@@ -8,6 +27,8 @@ import org.protege.editor.owl.model.entity.OWLEntityCreationSet;
 import org.protege.editor.owl.model.event.EventType;
 import org.protege.editor.owl.model.event.OWLModelManagerChangeEvent;
 import org.protege.editor.owl.model.event.OWLModelManagerListener;
+import org.protege.editor.owl.model.inference.OWLReasonerManager;
+import org.protege.editor.owl.model.inference.ReasonerUtilities;
 import org.protege.editor.owl.model.inference.NoOpReasoner;
 import org.protege.editor.owl.ui.CreateDefinedClassPanel;
 import org.protege.editor.owl.ui.clsdescriptioneditor.ExpressionEditor;
@@ -16,12 +37,6 @@ import org.protege.editor.owl.ui.view.AbstractOWLViewComponent;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLException;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.HierarchyEvent;
-import java.awt.event.HierarchyListener;
 /*
  * Copyright (C) 2007, University of Manchester
  *
@@ -280,18 +295,8 @@ public class OWLClassExpressionEditorViewComponent extends AbstractOWLViewCompon
     private void doQuery() {
         if (isShowing()){
             try {
-            	if (getOWLModelManager().getReasoner() instanceof NoOpReasoner) {
-                    JOptionPane.showMessageDialog(this,
-                            "Please initialize the reasoner",
-                            "No Reasoner",
-                            JOptionPane.WARNING_MESSAGE);
-            	}
-            	else if (!getOWLModelManager().getOWLReasonerManager().isClassified()) {
-                    JOptionPane.showMessageDialog(this,
-                                                  "The reasoner is not syncronised.  This may produce misleading results.",
-                                                  "Reasoner out of sync",
-                                                  JOptionPane.WARNING_MESSAGE);
-                }
+            	OWLReasonerManager reasonerManager = getOWLModelManager().getOWLReasonerManager();
+            	ReasonerUtilities.warnUserIfReasonerIsNotConfigured(this, reasonerManager);
 
                 OWLClassExpression desc = owlDescriptionEditor.createObject();
                 if (desc != null){
