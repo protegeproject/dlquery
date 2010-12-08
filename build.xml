@@ -33,7 +33,7 @@
    <!-- 
         these properties probably don't need changing
         -->
-   <property name = "src"               location = "./src"/>  
+   <property name = "src"               location = "./src/main/java"/>  
    <property name = "build"             location = "./build"/>
    <property name = "bundle.dir"        location = "${build}"/>
    <property name = "classes"           location = "${build}/classes"/>
@@ -143,7 +143,7 @@
        <fileset dir="." includes="*.xml">
            <exclude name="build.xml"/>
        </fileset>
-       <fileset dir="./resources"/>
+       <fileset dir="./src/main/resources"/>
      </copy>
    	 <!-- the manifest doesn't belong here but this is good for IDE's -->
      <mkdir dir="${classes}/META-INF"/>  
@@ -211,7 +211,7 @@
      <echo message = "variable and use one of the following targets"/>
      <echo message = "jar - builds the jar (bundle) file for this project"/>
      <echo message = "install - installs  the bundle into the Protege distribution"/>
-     <echo message = "copy.resources - copyies resources into the classes directory"/>
+     <echo message = "copy.resources - copies resources into the classes directory"/>
      <echo message = "    this can  be useful for ide developers - see the wiki"/>
    </target>
 
