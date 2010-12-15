@@ -6,9 +6,6 @@
 	<artifactId>org.coode.dlquery</artifactId>
 	<packaging>bundle</packaging>
 	<name>DL Query Plugin</name>
-	<!-- We have to disable the feature until the bug in the plugin is solved
-	  <version>${core.major.version}.${core.minor.version}.${core.micro.version}.b${core.build.number}-SNAPSHOT</version> 
-	 -->
 	<version>4.1.0.213_SNAPSHOT</version>
 	<properties>
 		<maven.compiler.source>1.5</maven.compiler.source>
@@ -53,7 +50,7 @@
         <dependency>
             <groupId>protege4</groupId>
             <artifactId>org.protege.editor.owl</artifactId>
-            <version>4.1.0.213_RELEASE</version>
+            <version>4.1.0.b213_2010_12_15_1114</version>
         </dependency>
         <dependency>
           <groupId>protege4</groupId>
