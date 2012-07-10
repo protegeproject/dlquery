@@ -7,6 +7,8 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -32,9 +34,13 @@ import org.protege.editor.owl.ui.CreateDefinedClassPanel;
 import org.protege.editor.owl.ui.clsdescriptioneditor.ExpressionEditor;
 import org.protege.editor.owl.ui.clsdescriptioneditor.OWLExpressionChecker;
 import org.protege.editor.owl.ui.view.AbstractOWLViewComponent;
+import org.semanticweb.owlapi.model.AddAxiom;
+import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;
+import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLException;
+import org.semanticweb.owlapi.model.OWLOntologyChange;
 
 
 /**
@@ -297,8 +303,12 @@ public class OWLClassExpressionEditorViewComponent extends AbstractOWLViewCompon
         try {
             OWLClassExpression desc = owlDescriptionEditor.createObject();
             OWLEntityCreationSet<OWLClass> creationSet = CreateDefinedClassPanel.showDialog(desc, getOWLEditorKit());
-            if (creationSet != null){
-                getOWLModelManager().applyChanges(creationSet.getOntologyChanges());
+            if (creationSet != null) {
+            	List<OWLOntologyChange> changes = new ArrayList<OWLOntologyChange>(creationSet.getOntologyChanges());
+            	OWLDataFactory factory = getOWLModelManager().getOWLDataFactory();
+            	OWLAxiom equiv = factory.getOWLEquivalentClassesAxiom(creationSet.getOWLEntity(), desc);
+            	changes.add(new AddAxiom(getOWLModelManager().getActiveOntology(), equiv));
+                getOWLModelManager().applyChanges(changes);
                 if (isSynchronizing()){
                     getOWLEditorKit().getOWLWorkspace().getOWLSelectionModel().setSelectedEntity(creationSet.getOWLEntity());    
                 }
