@@ -10,16 +10,16 @@
 	
 	<groupId>edu.stanford.protege</groupId>
 	<artifactId>org.coode.dlquery</artifactId>
-	<version>1.1.0</version>
+	<version>1.1.1-SNAPSHOT</version>
 	<packaging>bundle</packaging>
 
 	<name>DL Query</name>
 	<description>A plug-in for the Protege Desktop ontology editor that provides an easy interface for searching a classified ontology.</description>
 	
 	<scm>
-		<connection>scm:svn:http://smi-protege.stanford.edu/repos/protege/protege4/plugins/org.coode.dlquery/tags/org.coode.dlquery-1.1.0</connection>
-		<developerConnection>scm:svn:https://smi-protege.stanford.edu/repos/protege/protege4/plugins/org.coode.dlquery/tags/org.coode.dlquery-1.1.0</developerConnection>
-		<url>http://smi-protege.stanford.edu/svn/protege4/plugins/org.coode.dlquery/tags/org.coode.dlquery-1.1.0</url>
+		<connection>scm:svn:http://smi-protege.stanford.edu/repos/protege/protege4/plugins/org.coode.dlquery/trunk/</connection>
+		<developerConnection>scm:svn:https://smi-protege.stanford.edu/repos/protege/protege4/plugins/org.coode.dlquery/trunk/</developerConnection>
+		<url>http://smi-protege.stanford.edu/svn/protege4/plugins/org.coode.dlquery/</url>
 	</scm>
 
 	<dependencies>
