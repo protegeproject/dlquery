@@ -5,12 +5,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
+import java.util.*;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
@@ -37,6 +32,7 @@ import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.reasoner.Node;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 
+import static org.coode.dlquery.ResultsSection.*;
 
 /**
  * Author: Matthew Horridge<br>
@@ -53,17 +49,7 @@ public class ResultsList extends MList implements LinkedObjectComponent, Copyabl
 
     private OWLEditorKit owlEditorKit;
 
-    private boolean showSuperClasses;
-
-    private boolean showAncestorClasses;
-
-    private boolean showDescendantClasses;
-
-    private boolean showSubClasses;
-
-    private boolean showInstances;
-
-    private boolean showEquivalentClasses;
+    private Set<ResultsSection> visibleResultsSections = EnumSet.of(SUB_CLASSES);
 
     private LinkedObjectComponentMediator mediator;
 
@@ -85,64 +71,85 @@ public class ResultsList extends MList implements LinkedObjectComponent, Copyabl
         });
     }
 
+    public boolean isResultsSectionVisible(ResultsSection section) {
+        return visibleResultsSections.contains(section);
+    }
 
+    public void setResultsSectionVisible(ResultsSection section, boolean b) {
+        if (b) {
+            visibleResultsSections.add(section);
+        }
+        else {
+            visibleResultsSections.remove(section);
+        }
+    }
+
+
+    @Deprecated
     public boolean isShowAncestorClasses() {
-        return showAncestorClasses;
+        return visibleResultsSections.contains(SUPER_CLASSES);
     }
 
 
+    @Deprecated
     public void setShowAncestorClasses(boolean showAncestorClasses) {
-        this.showAncestorClasses = showAncestorClasses;
+        setResultsSectionVisible(SUPER_CLASSES, showAncestorClasses);
     }
 
 
+    @Deprecated
     public boolean isShowDescendantClasses() {
-        return showDescendantClasses;
+        return isResultsSectionVisible(SUB_CLASSES);
     }
 
 
+    @Deprecated
     public void setShowDescendantClasses(boolean showDescendantClasses) {
-        this.showDescendantClasses = showDescendantClasses;
+        setResultsSectionVisible(SUB_CLASSES, showDescendantClasses);
     }
 
 
+    @Deprecated
     public boolean isShowInstances() {
-        return showInstances;
+        return isResultsSectionVisible(INSTANCES);
     }
 
 
+    @Deprecated
     public void setShowInstances(boolean showInstances) {
-        this.showInstances = showInstances;
+        setResultsSectionVisible(INSTANCES, showInstances);
     }
 
 
+    @Deprecated
     public boolean isShowSubClasses() {
-        return showSubClasses;
+        return isResultsSectionVisible(DIRECT_SUB_CLASSES);
     }
 
-
+    @Deprecated
     public void setShowSubClasses(boolean showSubClasses) {
-        this.showSubClasses = showSubClasses;
+        setResultsSectionVisible(DIRECT_SUB_CLASSES, showSubClasses);
     }
 
-
+    @Deprecated
     public boolean isShowSuperClasses() {
-        return showSuperClasses;
+        return isResultsSectionVisible(DIRECT_SUPER_CLASSES);
     }
 
 
+    @Deprecated
     public void setShowSuperClasses(boolean showSuperClasses) {
-        this.showSuperClasses = showSuperClasses;
+        setResultsSectionVisible(DIRECT_SUPER_CLASSES, showSuperClasses);
     }
 
-
+    @Deprecated
     public boolean isShowEquivalentClasses() {
-        return showEquivalentClasses;
+        return isResultsSectionVisible(EQUIVALENT_CLASSES);
     }
 
-
+    @Deprecated
     public void setShowEquivalentClasses(boolean showEquivalentClasses) {
-        this.showEquivalentClasses = showEquivalentClasses;
+        setResultsSectionVisible(EQUIVALENT_CLASSES, showEquivalentClasses);
     }
 
 
@@ -158,28 +165,28 @@ public class ResultsList extends MList implements LinkedObjectComponent, Copyabl
         List<Object> data = new ArrayList<Object>();
         OWLDataFactory factory = owlEditorKit.getOWLModelManager().getOWLDataFactory();
         OWLReasoner reasoner = owlEditorKit.getModelManager().getReasoner();
-        if (showEquivalentClasses) {
+        if (isResultsSectionVisible(EQUIVALENT_CLASSES)) {
             final List<OWLClass> results = toSortedList(reasoner.getEquivalentClasses(description).getEntities());
-            data.add(new DLQueryResultsSection("Equivalent classes (" + results.size() + ")"));
+            data.add(new DLQueryResultsSection(EQUIVALENT_CLASSES.getDisplayName() + " (" + results.size() + ")"));
             for (OWLClass cls : results) {
                 data.add(new DLQueryResultsSectionItem(cls, factory.getOWLEquivalentClassesAxiom(description, cls)));
             }
         }
-        if (showAncestorClasses) {
+        if (isResultsSectionVisible(SUPER_CLASSES)) {
             final List<OWLClass> results = toSortedList(reasoner.getSuperClasses(description, false).getFlattened());
-            data.add(new DLQueryResultsSection("Ancestor classes (" + results.size() + ")"));
+            data.add(new DLQueryResultsSection(SUPER_CLASSES.getDisplayName() + " (" + results.size() + ")"));
             for (OWLClass superClass : results) {
                 data.add(new DLQueryResultsSectionItem(superClass, factory.getOWLSubClassOfAxiom(description, superClass)));
             }
         }
-        if (showSuperClasses) {
+        if (isResultsSectionVisible(DIRECT_SUPER_CLASSES)) {
             final List<OWLClass> results = toSortedList(reasoner.getSuperClasses(description, true).getFlattened());
-            data.add(new DLQueryResultsSection("Super classes (" + results.size() + ")"));
+            data.add(new DLQueryResultsSection(DIRECT_SUPER_CLASSES.getDisplayName() + " (" + results.size() + ")"));
             for (OWLClass superClass : results) {
                 data.add(new DLQueryResultsSectionItem(superClass, factory.getOWLSubClassOfAxiom(description, superClass)));
             }
         }
-        if (showSubClasses) {
+        if (isResultsSectionVisible(DIRECT_SUB_CLASSES)) {
             // flatten and filter out owl:Nothing
             OWLClass owlNothing = owlEditorKit.getOWLModelManager().getOWLDataFactory().getOWLNothing();
             final Set<OWLClass> resultSet = new HashSet<OWLClass>();
@@ -189,12 +196,12 @@ public class ResultsList extends MList implements LinkedObjectComponent, Copyabl
                 }
             }
             final List<OWLClass> results = toSortedList(resultSet);
-            data.add(new DLQueryResultsSection("Sub classes (" + results.size() + ")"));
+            data.add(new DLQueryResultsSection(DIRECT_SUB_CLASSES.getDisplayName() + " (" + results.size() + ")"));
             for (OWLClass subClass : results) {
                 data.add(new DLQueryResultsSectionItem(subClass, factory.getOWLSubClassOfAxiom(subClass, description)));
             }
         }
-        if (showDescendantClasses) {
+        if (isResultsSectionVisible(SUB_CLASSES)) {
             // flatten and filter out owl:Nothing
             OWLClass owlNothing = owlEditorKit.getOWLModelManager().getOWLDataFactory().getOWLNothing();
             final Set<OWLClass> resultSet = new HashSet<OWLClass>();
@@ -204,15 +211,15 @@ public class ResultsList extends MList implements LinkedObjectComponent, Copyabl
                 }
             }
             final List<OWLClass> results = toSortedList(resultSet);
-            data.add(new DLQueryResultsSection("Descendant classes (" + results.size() + ")"));
+            data.add(new DLQueryResultsSection(SUB_CLASSES.getDisplayName() + " (" + results.size() + ")"));
             for (OWLClass cls : results) {
                 data.add(new DLQueryResultsSectionItem(cls, factory.getOWLSubClassOfAxiom(cls, description)));
             }
         }
 
-        if (showInstances) {
+        if (isResultsSectionVisible(INSTANCES)) {
             final Set<OWLNamedIndividual> results = reasoner.getInstances(description, false).getFlattened();
-            data.add(new DLQueryResultsSection("Instances (" + results.size() + ")"));
+            data.add(new DLQueryResultsSection(INSTANCES.getDisplayName() + " (" + results.size() + ")"));
             for (OWLIndividual ind : results) {
                 data.add(new DLQueryResultsSectionItem(ind, factory.getOWLClassAssertionAxiom(description, ind)));
             }

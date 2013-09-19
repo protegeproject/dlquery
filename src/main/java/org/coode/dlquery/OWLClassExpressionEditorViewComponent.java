@@ -42,6 +42,7 @@ import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLException;
 import org.semanticweb.owlapi.model.OWLOntologyChange;
 
+import static org.coode.dlquery.ResultsSection.*;
 
 /**
  * Author: Matthew Horridge<br>
@@ -61,15 +62,15 @@ public class OWLClassExpressionEditorViewComponent extends AbstractOWLViewCompon
 
     private ResultsList resultsList;
 
-    private JCheckBox showSuperClassesCheckBox;
+    private JCheckBox showDirectSuperClassesCheckBox;
 
-    private JCheckBox showAncestorClassesCheckBox;
+    private JCheckBox showSuperClassesCheckBox;
 
     private JCheckBox showEquivalentClassesCheckBox;
 
-    private JCheckBox showSubClassesCheckBox;
+    private JCheckBox showDirectSubClassesCheckBox;
 
-    private JCheckBox showDescendantClassesCheckBox;
+    private JCheckBox showSubClassesCheckBox;
 
     private JCheckBox showIndividualsCheckBox;
 
@@ -168,7 +169,7 @@ public class OWLClassExpressionEditorViewComponent extends AbstractOWLViewCompon
         resultsPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(
                 Color.LIGHT_GRAY), "Query results"), BorderFactory.createEmptyBorder(3, 3, 3, 3)));
         resultsList = new ResultsList(getOWLEditorKit());
-        resultsList.setShowSubClasses(true);
+//        resultsList.setResultsSectionVisible(SUB_CLASSES, showSubClassesCheckBox.isSelected());
         resultsPanel.add(ComponentFactory.createScrollPane(resultsList));
         return resultsPanel;
     }
@@ -176,80 +177,80 @@ public class OWLClassExpressionEditorViewComponent extends AbstractOWLViewCompon
 
     private JComponent createOptionsBox() {
         Box optionsBox = new Box(BoxLayout.Y_AXIS);
-        showSuperClassesCheckBox = new JCheckBox(new AbstractAction("Super classes") {
+        showDirectSuperClassesCheckBox = new JCheckBox(new AbstractAction(DIRECT_SUPER_CLASSES.getDisplayName()) {
             /**
              * 
              */
             private static final long serialVersionUID = 1531417504526875891L;
 
             public void actionPerformed(ActionEvent e) {
-                resultsList.setShowSuperClasses(showSuperClassesCheckBox.isSelected());
+                resultsList.setResultsSectionVisible(DIRECT_SUPER_CLASSES, showDirectSuperClassesCheckBox.isSelected());
                 doQuery();
             }
         });
-        optionsBox.add(showSuperClassesCheckBox);
+        optionsBox.add(showDirectSuperClassesCheckBox);
         optionsBox.add(Box.createVerticalStrut(3));
 
-        showAncestorClassesCheckBox = new JCheckBox(new AbstractAction("Ancestor classes") {
+        showSuperClassesCheckBox = new JCheckBox(new AbstractAction(SUPER_CLASSES.getDisplayName()) {
             /**
              * 
              */
             private static final long serialVersionUID = 4603049796331219219L;
 
             public void actionPerformed(ActionEvent e) {
-                resultsList.setShowAncestorClasses(showAncestorClassesCheckBox.isSelected());
+                resultsList.setResultsSectionVisible(SUPER_CLASSES, showSuperClassesCheckBox.isSelected());
                 doQuery();
             }
         });
-        showAncestorClassesCheckBox.setSelected(false);
-        optionsBox.add(showAncestorClassesCheckBox);
+        showSuperClassesCheckBox.setSelected(false);
+        optionsBox.add(showSuperClassesCheckBox);
         optionsBox.add(Box.createVerticalStrut(3));
 
-        showEquivalentClassesCheckBox = new JCheckBox(new AbstractAction("Equivalent classes") {
+        showEquivalentClassesCheckBox = new JCheckBox(new AbstractAction(EQUIVALENT_CLASSES.getDisplayName()) {
             /**
              * 
              */
             private static final long serialVersionUID = -3766966095409342054L;
 
             public void actionPerformed(ActionEvent e) {
-                resultsList.setShowEquivalentClasses(showEquivalentClassesCheckBox.isSelected());
+                resultsList.setResultsSectionVisible(EQUIVALENT_CLASSES, showEquivalentClassesCheckBox.isSelected());
                 doQuery();
             }
         });
         optionsBox.add(showEquivalentClassesCheckBox);
         optionsBox.add(Box.createVerticalStrut(3));
 
-        showSubClassesCheckBox = new JCheckBox(new AbstractAction("Subclasses") {
+        showDirectSubClassesCheckBox = new JCheckBox(new AbstractAction(DIRECT_SUB_CLASSES.getDisplayName()) {
             private static final long serialVersionUID = 696913194074753412L;
 
             public void actionPerformed(ActionEvent e) {
-                resultsList.setShowSubClasses(showSubClassesCheckBox.isSelected());
+                resultsList.setResultsSectionVisible(DIRECT_SUB_CLASSES, showDirectSubClassesCheckBox.isSelected());
                 doQuery();
             }
         });
-        optionsBox.add(showSubClassesCheckBox);
+        optionsBox.add(showDirectSubClassesCheckBox);
         optionsBox.add(Box.createVerticalStrut(3));
 
-        showDescendantClassesCheckBox = new JCheckBox(new AbstractAction("Descendant classes") {
+        showSubClassesCheckBox = new JCheckBox(new AbstractAction(SUB_CLASSES.getDisplayName()) {
             private static final long serialVersionUID = -3418802363566640471L;
 
             public void actionPerformed(ActionEvent e) {
-                resultsList.setShowDescendantClasses(showDescendantClassesCheckBox.isSelected());
+                resultsList.setResultsSectionVisible(SUB_CLASSES, showSubClassesCheckBox.isSelected());
                 doQuery();
             }
         });
-        showDescendantClassesCheckBox.setSelected(false);
-        optionsBox.add(showDescendantClassesCheckBox);
+        showSubClassesCheckBox.setSelected(false);
+        optionsBox.add(showSubClassesCheckBox);
         optionsBox.add(Box.createVerticalStrut(3));
 
-        showIndividualsCheckBox = new JCheckBox(new AbstractAction("Individuals") {
+        showIndividualsCheckBox = new JCheckBox(new AbstractAction(INSTANCES.getDisplayName()) {
             /**
              * 
              */
             private static final long serialVersionUID = -7727032635999833150L;
 
             public void actionPerformed(ActionEvent e) {
-                resultsList.setShowInstances(showIndividualsCheckBox.isSelected());
+                resultsList.setResultsSectionVisible(INSTANCES, showIndividualsCheckBox.isSelected());
                 doQuery();
             }
         });
@@ -265,12 +266,12 @@ public class OWLClassExpressionEditorViewComponent extends AbstractOWLViewCompon
 
 
     private void updateGUI() {
-        showSuperClassesCheckBox.setSelected(resultsList.isShowSuperClasses());
-        showAncestorClassesCheckBox.setSelected(resultsList.isShowAncestorClasses());
-        showEquivalentClassesCheckBox.setSelected(resultsList.isShowEquivalentClasses());
-        showSubClassesCheckBox.setSelected(resultsList.isShowSubClasses());
-        showDescendantClassesCheckBox.setSelected(resultsList.isShowDescendantClasses());
-        showIndividualsCheckBox.setSelected(resultsList.isShowInstances());
+        showDirectSuperClassesCheckBox.setSelected(resultsList.isResultsSectionVisible(DIRECT_SUPER_CLASSES));
+        showSuperClassesCheckBox.setSelected(resultsList.isResultsSectionVisible(SUPER_CLASSES));
+        showEquivalentClassesCheckBox.setSelected(resultsList.isResultsSectionVisible(EQUIVALENT_CLASSES));
+        showDirectSubClassesCheckBox.setSelected(resultsList.isResultsSectionVisible(DIRECT_SUB_CLASSES));
+        showSubClassesCheckBox.setSelected(resultsList.isResultsSectionVisible(SUB_CLASSES));
+        showIndividualsCheckBox.setSelected(resultsList.isResultsSectionVisible(INSTANCES));
     }
 
 
