@@ -9,7 +9,44 @@
 
 	<name>DL Query</name>
 	<description>A plug-in for the Protege Desktop ontology editor that provides an easy interface for searching a classified ontology.</description>
+	<url>https://github.com/protegeproject/dlquery</url>
+	<organization>
+		<name>Stanford Center for Biomedical Informatics Research</name>
+		<url>http://bmir.stanford.edu/</url>
+	</organization>
+	<licenses>
+		<license>
+			<name>GNU Lesser General Public License</name>
+			<url>http://www.gnu.org/copyleft/lesser.html</url>
+		</license>
+	</licenses>
 	
+	<!-- Alphabetical by last name -->
+	<developers>
+		<developer>
+			<id>matthewhorridge</id>
+			<name>Matthew Horridge</name>
+			<email>matthew.horridge@stanford.edu</email>
+		</developer>
+		<developer>
+			<id>stdotjohn</id>
+			<name>Timothy Redmond</name>
+			<email>tredmond@stanford.edu</email>
+		</developer>
+		<developer>
+			<id>jvendetti</id>
+			<name>Jennifer Vendetti</name>
+			<email>vendetti@stanford.edu</email>
+		</developer>
+	</developers>
+	
+	<contributors>
+		<contributor>
+			<name>Nick Drummond</name>
+			<email>nickdrummond@yahoo.com</email>
+		</contributor>
+	</contributors>		
+
 	<mailingLists>
 		<!-- For end users with questions about how to use the DL Query tab. -->
 		<mailingList>
