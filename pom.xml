@@ -16,6 +16,32 @@
 	<name>DL Query</name>
 	<description>A plug-in for the Protege Desktop ontology editor that provides an easy interface for searching a classified ontology.</description>
 	
+	<mailingLists>
+		<!-- For end users with questions about how to use the DL Query tab. -->
+		<mailingList>
+			<name>protege-user</name>
+			<subscribe>https://mailman.stanford.edu/mailman/listinfo/protege-user</subscribe>
+			<unsubscribe>https://mailman.stanford.edu/mailman/listinfo/protege-user</unsubscribe>
+			<post>protege-user@lists.stanford.edu</post>
+			<archive>http://protege-project.136.n4.nabble.com/</archive>
+			<otherArchives>
+				<otherArchive>https://mailman.stanford.edu/pipermail/protege-user/</otherArchive>
+			</otherArchives>
+		</mailingList>
+		
+		<!-- For developers.  -->
+		<mailingList>
+			<name>protege-dev</name>
+			<subscribe>https://mailman.stanford.edu/mailman/listinfo/protege-dev</subscribe>
+			<unsubscribe>https://mailman.stanford.edu/mailman/listinfo/protege-dev</unsubscribe>
+			<post>protege-dev@lists.stanford.edu</post>
+			<archive>http://protege-project.136.n4.nabble.com/</archive>
+			<otherArchives>
+				<otherArchive>https://mailman.stanford.edu/pipermail/protege-dev/</otherArchive>
+			</otherArchives>
+		</mailingList>
+	</mailingLists>
+		
 	<scm>
 		<connection>scm:git:git@github.com:protegeproject/org.coode.dlquery.git</connection>
 		<developerConnection>scm:git:git@github.com:protegeproject/org.coode.dlquery.git</developerConnection>
