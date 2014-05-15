@@ -21,7 +21,11 @@
 		<developerConnection>scm:git:git@github.com:protegeproject/org.coode.dlquery.git</developerConnection>
 		<url>https://github.com/protegeproject/org.coode.dlquery</url>
 	</scm>
-
+	<issueManagement>
+		<system>GitHub</system>
+		<url>https://github.com/protegeproject/dlquery/issues</url>
+	</issueManagement>
+	
 	<dependencies>
 		<dependency>
 			<groupId>edu.stanford.protege</groupId>
