@@ -8,13 +8,13 @@ package org.coode.dlquery;
  */
 public enum ResultsSection {
 
-    DIRECT_SUPER_CLASSES("Direct super classes"),
+    DIRECT_SUPER_CLASSES("Direct superclasses"),
 
-    DIRECT_SUB_CLASSES("Direct sub classes"),
+    DIRECT_SUB_CLASSES("Direct subclasses"),
 
-    SUPER_CLASSES("Super classes"),
+    SUPER_CLASSES("Superclasses"),
 
-    SUB_CLASSES("Sub classes"),
+    SUB_CLASSES("Subclasses"),
 
     EQUIVALENT_CLASSES("Equivalent classes"),
 
