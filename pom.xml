@@ -4,7 +4,7 @@
 	
 	<groupId>edu.stanford.protege</groupId>
 	<artifactId>org.coode.dlquery</artifactId>
-	<version>1.1.5-SNAPSHOT</version>
+	<version>2.0.0-SNAPSHOT</version>
 	<packaging>bundle</packaging>
 
 	<name>DL Query</name>
@@ -104,19 +104,19 @@
 		<dependency>
 			<groupId>edu.stanford.protege</groupId>
 			<artifactId>org.protege.common</artifactId>
-			<version>4.3.0</version>
+			<version>5.0.0-beta-15</version>
 		</dependency>
 
         <dependency>
 			<groupId>edu.stanford.protege</groupId>
 			<artifactId>org.protege.editor.core.application</artifactId>
-			<version>4.3.0</version>
+			<version>5.0.0-beta-15</version>
         </dependency>
 
         <dependency>
 			<groupId>edu.stanford.protege</groupId>
             <artifactId>org.protege.editor.owl</artifactId>
-			<version>4.3.0</version>
+			<version>5.0.0-beta-15</version>
         </dependency>
 	</dependencies>
 
@@ -145,8 +145,8 @@
 						<Bundle-Vendor>The Protege Development Team</Bundle-Vendor>
 						<Import-Package>
 							org.apache.log4j.*;version="[1.2,2)", 
-							org.protege.editor.core.*;version="4.3", <!-- equivalent to [4.3,infinity) -->
-							org.protege.editor.owl.*;version="4.3",
+							org.protege.editor.core.*;version="5.0.0",
+							org.protege.editor.owl.*;version="5.0.0",
 							*
 						</Import-Package>
 						<Include-Resource>plugin.xml, {maven-resources}</Include-Resource>
