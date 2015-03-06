@@ -8,7 +8,7 @@
 	<packaging>bundle</packaging>
 
 	<name>DL Query</name>
-	<description>A plug-in for the Protege Desktop ontology editor that provides an easy interface for searching a classified ontology.</description>
+	<description>A plug-in for Protege that provides a reasoner-backed query capability.</description>
 	<url>https://github.com/protegeproject/dlquery</url>
 	<organization>
 		<name>Stanford Center for Biomedical Informatics Research</name>
