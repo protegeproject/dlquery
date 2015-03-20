@@ -114,6 +114,14 @@
 	</dependencies>
 
 	<build>
+
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+
 		<plugins>
 
             <plugin>
@@ -176,15 +184,6 @@
 						<Include-Resource>{maven-resources}</Include-Resource>
 						<Private-Package>${project.artifactId}</Private-Package>
 					</instructions>
-					<executions>
-						<execution>
-							<id>bundle-manifest</id>
-							<phase>install</phase>
-							<goals>    
-								<goal>manifest</goal>
-							</goals>   
-						</execution>
-					</executions>
 				</configuration>
             </plugin>
             
