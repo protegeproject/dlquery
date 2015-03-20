@@ -47,13 +47,13 @@ public class ResultsList extends MList implements LinkedObjectComponent, Copyabl
      */
     private static final long serialVersionUID = 8184853513690586368L;
 
-    private OWLEditorKit owlEditorKit;
+    private final OWLEditorKit owlEditorKit;
 
-    private Set<ResultsSection> visibleResultsSections = EnumSet.of(SUB_CLASSES);
+    private final Set<ResultsSection> visibleResultsSections = EnumSet.of(SUB_CLASSES);
 
-    private LinkedObjectComponentMediator mediator;
+    private final LinkedObjectComponentMediator mediator;
 
-    private List<ChangeListener> copyListeners = new ArrayList<ChangeListener>();
+    private final List<ChangeListener> copyListeners = new ArrayList<>();
 
     public ResultsList(OWLEditorKit owlEditorKit) {
         this.owlEditorKit = owlEditorKit;
@@ -61,9 +61,11 @@ public class ResultsList extends MList implements LinkedObjectComponent, Copyabl
         mediator = new LinkedObjectComponentMediator(owlEditorKit, this);
         getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent event) {
-                ChangeEvent ev = new ChangeEvent(ResultsList.this);
-                for (ChangeListener l : copyListeners) {
-                    l.stateChanged(ev);
+                if (!event.getValueIsAdjusting()) {
+                    ChangeEvent ev = new ChangeEvent(ResultsList.this);
+                    for (ChangeListener l : new ArrayList<>(copyListeners)) {
+                        l.stateChanged(ev);
+                    }
                 }
             }
         });
