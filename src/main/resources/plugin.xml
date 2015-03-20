@@ -9,6 +9,7 @@
         <editorKitId value="OWLEditorKit"/>
         <index value="Q"/>
         <defaultViewConfigFileName value="viewconfig-dlquerytab.xml"/>
+        <protegeDefaultTab value="true"/>
     </extension>
 
     <extension id="OWLClassExpressionEditorViewComponent"
