@@ -13,7 +13,7 @@
 
     <groupId>edu.stanford.protege</groupId>
     <artifactId>org.coode.dlquery</artifactId>
-    <version>2.0.3-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
     <packaging>bundle</packaging>
 
     <name>DL Query</name>
