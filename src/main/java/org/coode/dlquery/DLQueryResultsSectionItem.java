@@ -35,8 +35,9 @@ import org.semanticweb.owlapi.model.OWLObject;
  */
 public class DLQueryResultsSectionItem implements MListItem {
 
-    private OWLObject object;
-    private OWLAxiom  axiom;
+    private final OWLObject object;
+
+    private final OWLAxiom  axiom;
 
 
     public DLQueryResultsSectionItem(OWLObject object, OWLAxiom axiom) {

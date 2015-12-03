@@ -5,8 +5,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.HierarchyEvent;
-import java.awt.event.HierarchyListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,13 +18,10 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 
-import org.apache.log4j.Logger;
 import org.protege.editor.core.ui.util.ComponentFactory;
-import org.protege.editor.core.ui.util.InputVerificationStatusChangedListener;
 import org.protege.editor.owl.model.cache.OWLExpressionUserCache;
 import org.protege.editor.owl.model.entity.OWLEntityCreationSet;
 import org.protege.editor.owl.model.event.EventType;
-import org.protege.editor.owl.model.event.OWLModelManagerChangeEvent;
 import org.protege.editor.owl.model.event.OWLModelManagerListener;
 import org.protege.editor.owl.model.inference.OWLReasonerManager;
 import org.protege.editor.owl.model.inference.ReasonerUtilities;
@@ -41,6 +36,10 @@ import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLException;
 import org.semanticweb.owlapi.model.OWLOntologyChange;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 import static org.coode.dlquery.ResultsSection.*;
 
@@ -49,14 +48,15 @@ import static org.coode.dlquery.ResultsSection.*;
  * The University Of Manchester<br>
  * Medical Informatics Group<br>
  * Date: 22-Aug-2006<br><br>
- *
+ * <p/>
  * matthew.horridge@cs.man.ac.uk<br>
  * www.cs.man.ac.uk/~horridgm<br><br>
  */
 public class OWLClassExpressionEditorViewComponent extends AbstractOWLViewComponent {
-    private static final long serialVersionUID = 8268241587271333587L;
 
-    Logger log = Logger.getLogger(OWLClassExpressionEditorViewComponent.class);
+    public static final Marker marker = MarkerFactory.getMarker("DL Query");
+
+    private final Logger logger = LoggerFactory.getLogger(OWLClassExpressionEditorViewComponent.class);
 
     private ExpressionEditor<OWLClassExpression> owlDescriptionEditor;
 
@@ -98,21 +98,17 @@ public class OWLClassExpressionEditorViewComponent extends AbstractOWLViewCompon
 
         updateGUI();
 
-        listener = new OWLModelManagerListener() {
-            public void handleChange(OWLModelManagerChangeEvent event) {
-                if (event.isType(EventType.ONTOLOGY_CLASSIFIED)) {
-                    doQuery();
-                }
+        listener = event -> {
+            if (event.isType(EventType.ONTOLOGY_CLASSIFIED)) {
+                doQuery();
             }
         };
 
         getOWLModelManager().addListener(listener);
 
-        addHierarchyListener(new HierarchyListener(){
-            public void hierarchyChanged(HierarchyEvent event) {
-                if (requiresRefresh && isShowing()){
-                    doQuery();
-                }
+        addHierarchyListener(event -> {
+            if (requiresRefresh && isShowing()) {
+                doQuery();
             }
         });
     }
@@ -122,38 +118,21 @@ public class OWLClassExpressionEditorViewComponent extends AbstractOWLViewCompon
         JPanel editorPanel = new JPanel(new BorderLayout());
 
         final OWLExpressionChecker<OWLClassExpression> checker = getOWLModelManager().getOWLExpressionCheckerFactory().getOWLClassExpressionChecker();
-        owlDescriptionEditor = new ExpressionEditor<OWLClassExpression>(getOWLEditorKit(), checker);
-        owlDescriptionEditor.addStatusChangedListener(new InputVerificationStatusChangedListener(){
-            public void verifiedStatusChanged(boolean newState) {
-                executeButton.setEnabled(newState);
-                addButton.setEnabled(newState);
-            }
+        owlDescriptionEditor = new ExpressionEditor<>(getOWLEditorKit(), checker);
+        owlDescriptionEditor.addStatusChangedListener(newState -> {
+            executeButton.setEnabled(newState);
+            addButton.setEnabled(newState);
         });
         owlDescriptionEditor.setPreferredSize(new Dimension(100, 50));
 
         editorPanel.add(ComponentFactory.createScrollPane(owlDescriptionEditor), BorderLayout.CENTER);
         JPanel buttonHolder = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        executeButton = new JButton(new AbstractAction("Execute") {
-            /**
-             * 
-             */
-            private static final long serialVersionUID = -1833321282125901561L;
+        executeButton = new JButton("Execute");
+        executeButton.addActionListener(e -> doQuery());
 
-            public void actionPerformed(ActionEvent e) {
-                doQuery();
-            }
-        });
+        addButton = new JButton("Add to ontology");
+        addButton.addActionListener(e -> doAdd());
 
-        addButton = new JButton(new AbstractAction("Add to ontology"){
-            /**
-             * 
-             */
-            private static final long serialVersionUID = -6050625862820344594L;
-
-            public void actionPerformed(ActionEvent event) {
-                doAdd();
-            }
-        });
         buttonHolder.add(executeButton);
         buttonHolder.add(addButton);
 
@@ -178,11 +157,6 @@ public class OWLClassExpressionEditorViewComponent extends AbstractOWLViewCompon
     private JComponent createOptionsBox() {
         Box optionsBox = new Box(BoxLayout.Y_AXIS);
         showDirectSuperClassesCheckBox = new JCheckBox(new AbstractAction(DIRECT_SUPER_CLASSES.getDisplayName()) {
-            /**
-             * 
-             */
-            private static final long serialVersionUID = 1531417504526875891L;
-
             public void actionPerformed(ActionEvent e) {
                 resultsList.setResultsSectionVisible(DIRECT_SUPER_CLASSES, showDirectSuperClassesCheckBox.isSelected());
                 doQuery();
@@ -192,11 +166,6 @@ public class OWLClassExpressionEditorViewComponent extends AbstractOWLViewCompon
         optionsBox.add(Box.createVerticalStrut(3));
 
         showSuperClassesCheckBox = new JCheckBox(new AbstractAction(SUPER_CLASSES.getDisplayName()) {
-            /**
-             * 
-             */
-            private static final long serialVersionUID = 4603049796331219219L;
-
             public void actionPerformed(ActionEvent e) {
                 resultsList.setResultsSectionVisible(SUPER_CLASSES, showSuperClassesCheckBox.isSelected());
                 doQuery();
@@ -207,11 +176,6 @@ public class OWLClassExpressionEditorViewComponent extends AbstractOWLViewCompon
         optionsBox.add(Box.createVerticalStrut(3));
 
         showEquivalentClassesCheckBox = new JCheckBox(new AbstractAction(EQUIVALENT_CLASSES.getDisplayName()) {
-            /**
-             * 
-             */
-            private static final long serialVersionUID = -3766966095409342054L;
-
             public void actionPerformed(ActionEvent e) {
                 resultsList.setResultsSectionVisible(EQUIVALENT_CLASSES, showEquivalentClassesCheckBox.isSelected());
                 doQuery();
@@ -221,8 +185,6 @@ public class OWLClassExpressionEditorViewComponent extends AbstractOWLViewCompon
         optionsBox.add(Box.createVerticalStrut(3));
 
         showDirectSubClassesCheckBox = new JCheckBox(new AbstractAction(DIRECT_SUB_CLASSES.getDisplayName()) {
-            private static final long serialVersionUID = 696913194074753412L;
-
             public void actionPerformed(ActionEvent e) {
                 resultsList.setResultsSectionVisible(DIRECT_SUB_CLASSES, showDirectSubClassesCheckBox.isSelected());
                 doQuery();
@@ -232,8 +194,6 @@ public class OWLClassExpressionEditorViewComponent extends AbstractOWLViewCompon
         optionsBox.add(Box.createVerticalStrut(3));
 
         showSubClassesCheckBox = new JCheckBox(new AbstractAction(SUB_CLASSES.getDisplayName()) {
-            private static final long serialVersionUID = -3418802363566640471L;
-
             public void actionPerformed(ActionEvent e) {
                 resultsList.setResultsSectionVisible(SUB_CLASSES, showSubClassesCheckBox.isSelected());
                 doQuery();
@@ -244,11 +204,6 @@ public class OWLClassExpressionEditorViewComponent extends AbstractOWLViewCompon
         optionsBox.add(Box.createVerticalStrut(3));
 
         showIndividualsCheckBox = new JCheckBox(new AbstractAction(INSTANCES.getDisplayName()) {
-            /**
-             * 
-             */
-            private static final long serialVersionUID = -7727032635999833150L;
-
             public void actionPerformed(ActionEvent e) {
                 resultsList.setResultsSectionVisible(INSTANCES, showIndividualsCheckBox.isSelected());
                 doQuery();
@@ -276,25 +231,22 @@ public class OWLClassExpressionEditorViewComponent extends AbstractOWLViewCompon
 
 
     private void doQuery() {
-        if (isShowing()){
+        if (isShowing()) {
             try {
-            	OWLReasonerManager reasonerManager = getOWLModelManager().getOWLReasonerManager();
-            	ReasonerUtilities.warnUserIfReasonerIsNotConfigured(this, reasonerManager);
+                OWLReasonerManager reasonerManager = getOWLModelManager().getOWLReasonerManager();
+                ReasonerUtilities.warnUserIfReasonerIsNotConfigured(this, reasonerManager);
 
                 OWLClassExpression desc = owlDescriptionEditor.createObject();
-                if (desc != null){
+                if (desc != null) {
                     OWLExpressionUserCache.getInstance(getOWLModelManager()).add(desc, owlDescriptionEditor.getText());
                     resultsList.setOWLClassExpression(desc);
                 }
-            }
-            catch (OWLException e) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Exception caught trying to do the query", e);
-                }
+            } catch (OWLException e) {
+                logger.error(marker, "An error occurred whilst executing the DL query: {}", e.getMessage(), e);
             }
             requiresRefresh = false;
         }
-        else{
+        else {
             requiresRefresh = true;
         }
     }
@@ -305,20 +257,17 @@ public class OWLClassExpressionEditorViewComponent extends AbstractOWLViewCompon
             OWLClassExpression desc = owlDescriptionEditor.createObject();
             OWLEntityCreationSet<OWLClass> creationSet = CreateDefinedClassPanel.showDialog(desc, getOWLEditorKit());
             if (creationSet != null) {
-            	List<OWLOntologyChange> changes = new ArrayList<OWLOntologyChange>(creationSet.getOntologyChanges());
-            	OWLDataFactory factory = getOWLModelManager().getOWLDataFactory();
-            	OWLAxiom equiv = factory.getOWLEquivalentClassesAxiom(creationSet.getOWLEntity(), desc);
-            	changes.add(new AddAxiom(getOWLModelManager().getActiveOntology(), equiv));
+                List<OWLOntologyChange> changes = new ArrayList<>(creationSet.getOntologyChanges());
+                OWLDataFactory factory = getOWLModelManager().getOWLDataFactory();
+                OWLAxiom equiv = factory.getOWLEquivalentClassesAxiom(creationSet.getOWLEntity(), desc);
+                changes.add(new AddAxiom(getOWLModelManager().getActiveOntology(), equiv));
                 getOWLModelManager().applyChanges(changes);
-                if (isSynchronizing()){
-                    getOWLEditorKit().getOWLWorkspace().getOWLSelectionModel().setSelectedEntity(creationSet.getOWLEntity());    
+                if (isSynchronizing()) {
+                    getOWLEditorKit().getOWLWorkspace().getOWLSelectionModel().setSelectedEntity(creationSet.getOWLEntity());
                 }
             }
-        }
-        catch (OWLException e) {
-            if (log.isDebugEnabled()){
-                log.debug("Exception caught trying to parse DL query", e);
-            }
+        } catch (OWLException e) {
+            logger.error(marker, "An error occurred whilst adding the class definition: {}", e.getMessage(), e);
         }
     }
 }

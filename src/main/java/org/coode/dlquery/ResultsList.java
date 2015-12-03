@@ -42,11 +42,6 @@ import static org.coode.dlquery.ResultsSection.*;
  */
 public class ResultsList extends MList implements LinkedObjectComponent, Copyable {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = 8184853513690586368L;
-
     private final OWLEditorKit owlEditorKit;
 
     private final Set<ResultsSection> visibleResultsSections = EnumSet.of(SUB_CLASSES);
@@ -83,75 +78,15 @@ public class ResultsList extends MList implements LinkedObjectComponent, Copyabl
         }
     }
 
-    @Deprecated
-    public boolean isShowAncestorClasses() {
-        return visibleResultsSections.contains(SUPER_CLASSES);
-    }
-
-    @Deprecated
-    public void setShowAncestorClasses(boolean showAncestorClasses) {
-        setResultsSectionVisible(SUPER_CLASSES, showAncestorClasses);
-    }
-
-    @Deprecated
-    public boolean isShowDescendantClasses() {
-        return isResultsSectionVisible(SUB_CLASSES);
-    }
-
-    @Deprecated
-    public void setShowDescendantClasses(boolean showDescendantClasses) {
-        setResultsSectionVisible(SUB_CLASSES, showDescendantClasses);
-    }
-
-    @Deprecated
-    public boolean isShowInstances() {
-        return isResultsSectionVisible(INSTANCES);
-    }
-
-    @Deprecated
-    public void setShowInstances(boolean showInstances) {
-        setResultsSectionVisible(INSTANCES, showInstances);
-    }
-
-    @Deprecated
-    public boolean isShowSubClasses() {
-        return isResultsSectionVisible(DIRECT_SUB_CLASSES);
-    }
-
-    @Deprecated
-    public void setShowSubClasses(boolean showSubClasses) {
-        setResultsSectionVisible(DIRECT_SUB_CLASSES, showSubClasses);
-    }
-
-    @Deprecated
-    public boolean isShowSuperClasses() {
-        return isResultsSectionVisible(DIRECT_SUPER_CLASSES);
-    }
-
-    @Deprecated
-    public void setShowSuperClasses(boolean showSuperClasses) {
-        setResultsSectionVisible(DIRECT_SUPER_CLASSES, showSuperClasses);
-    }
-
-    @Deprecated
-    public boolean isShowEquivalentClasses() {
-        return isResultsSectionVisible(EQUIVALENT_CLASSES);
-    }
-
-    @Deprecated
-    public void setShowEquivalentClasses(boolean showEquivalentClasses) {
-        setResultsSectionVisible(EQUIVALENT_CLASSES, showEquivalentClasses);
-    }
-
     private List<OWLClass> toSortedList(Set<OWLClass> clses) {
         OWLClassExpressionComparator descriptionComparator = new OWLClassExpressionComparator(owlEditorKit.getModelManager());
-        List<OWLClass> list = new ArrayList<OWLClass>(clses);
+        List<OWLClass> list = new ArrayList<>(clses);
         Collections.sort(list, descriptionComparator);
         return list;
     }
 
     public void setOWLClassExpression(OWLClassExpression description) {
-        List<Object> data = new ArrayList<Object>();
+        List<Object> data = new ArrayList<>();
         OWLDataFactory factory = owlEditorKit.getOWLModelManager().getOWLDataFactory();
         OWLReasoner reasoner = owlEditorKit.getModelManager().getReasoner();
         if (isResultsSectionVisible(EQUIVALENT_CLASSES)) {
@@ -176,7 +111,7 @@ public class ResultsList extends MList implements LinkedObjectComponent, Copyabl
             }
         }
         if (isResultsSectionVisible(DIRECT_SUB_CLASSES)) {
-            final Set<OWLClass> resultSet = new HashSet<OWLClass>();
+            final Set<OWLClass> resultSet = new HashSet<>();
             for (Node<OWLClass> clsSet : reasoner.getSubClasses(description, true)) {
                 resultSet.addAll(clsSet.getEntities());
             }
@@ -187,7 +122,7 @@ public class ResultsList extends MList implements LinkedObjectComponent, Copyabl
             }
         }
         if (isResultsSectionVisible(SUB_CLASSES)) {
-            final Set<OWLClass> resultSet = new HashSet<OWLClass>();
+            final Set<OWLClass> resultSet = new HashSet<>();
             for (Node<OWLClass> clsSet : reasoner.getSubClasses(description, false)) {
                 resultSet.addAll(clsSet.getEntities());
             }
@@ -210,12 +145,10 @@ public class ResultsList extends MList implements LinkedObjectComponent, Copyabl
     protected List<MListButton> getButtons(Object value) {
         if (value instanceof DLQueryResultsSectionItem) {
             final OWLAxiom axiom = ((DLQueryResultsSectionItem) value).getAxiom();
-            List<MListButton> buttons = new ArrayList<MListButton>();
-            buttons.add(new ExplainButton(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    ExplanationManager em = owlEditorKit.getOWLModelManager().getExplanationManager();
-                    em.handleExplain((Frame) SwingUtilities.getAncestorOfClass(Frame.class, ResultsList.this), axiom);
-                }
+            List<MListButton> buttons = new ArrayList<>();
+            buttons.add(new ExplainButton(e -> {
+                ExplanationManager em = owlEditorKit.getOWLModelManager().getExplanationManager();
+                em.handleExplain((Frame) SwingUtilities.getAncestorOfClass(Frame.class, ResultsList.this), axiom);
             }));
             return buttons;
         } else {
@@ -264,8 +197,8 @@ public class ResultsList extends MList implements LinkedObjectComponent, Copyabl
     }
 
     public List<OWLObject> getObjectsToCopy() {
-        List<OWLObject> copyObjects = new ArrayList<OWLObject>();
-        for (Object sel : getSelectedValues()) {
+        List<OWLObject> copyObjects = new ArrayList<>();
+        for (Object sel : getSelectedValuesList()) {
             if (sel instanceof DLQueryResultsSectionItem) {
                 copyObjects.add(((DLQueryResultsSectionItem) sel).getOWLObject());
             }
