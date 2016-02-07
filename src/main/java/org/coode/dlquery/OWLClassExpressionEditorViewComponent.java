@@ -137,16 +137,20 @@ public class OWLClassExpressionEditorViewComponent extends AbstractOWLViewCompon
         buttonHolder.add(addButton);
 
         editorPanel.add(buttonHolder, BorderLayout.SOUTH);
-        editorPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(
-                Color.LIGHT_GRAY), "Query (class expression)"), BorderFactory.createEmptyBorder(3, 3, 3, 3)));
+        editorPanel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createTitledBorder(
+                        BorderFactory.createEmptyBorder(),
+                        "Query (class expression)"),
+                BorderFactory.createEmptyBorder(3, 3, 3, 3)));
         return editorPanel;
     }
 
 
     private JComponent createResultsPanel() {
         JComponent resultsPanel = new JPanel(new BorderLayout(10, 10));
-        resultsPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(
-                Color.LIGHT_GRAY), "Query results"), BorderFactory.createEmptyBorder(3, 3, 3, 3)));
+        resultsPanel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), "Query results"),
+                BorderFactory.createEmptyBorder(3, 3, 3, 3)));
         resultsList = new ResultsList(getOWLEditorKit());
 //        resultsList.setResultsSectionVisible(SUB_CLASSES, showSubClassesCheckBox.isSelected());
         resultsPanel.add(ComponentFactory.createScrollPane(resultsList));
