@@ -141,17 +141,20 @@ public class ResultsList extends MList implements LinkedObjectComponent, Copyabl
     }
 
     protected List<MListButton> getButtons(Object value) {
-        if (value instanceof DLQueryResultsSectionItem) {
-            final OWLAxiom axiom = ((DLQueryResultsSectionItem) value).getAxiom();
-            List<MListButton> buttons = new ArrayList<>();
-            buttons.add(new ExplainButton(e -> {
-                ExplanationManager em = owlEditorKit.getOWLModelManager().getExplanationManager();
-                em.handleExplain((Frame) SwingUtilities.getAncestorOfClass(Frame.class, ResultsList.this), axiom);
-            }));
-            return buttons;
-        } else {
+        if (!(value instanceof DLQueryResultsSectionItem)) {
             return Collections.emptyList();
         }
+        final OWLAxiom axiom = ((DLQueryResultsSectionItem) value).getAxiom();
+        ExplanationManager explanationManager = owlEditorKit.getOWLModelManager().getExplanationManager();
+        if (!explanationManager.hasExplanation(axiom)) {
+            return Collections.emptyList();
+        }
+        return Arrays.asList(
+                new ExplainButton(e -> {
+                    Frame parent = (Frame) SwingUtilities.getAncestorOfClass(Frame.class, ResultsList.this);
+                    explanationManager.handleExplain(parent, axiom);
+                })
+        );
     }
 
     public JComponent getComponent() {
