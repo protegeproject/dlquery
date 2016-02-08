@@ -1,7 +1,6 @@
 package org.coode.dlquery;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -54,7 +53,7 @@ import static org.coode.dlquery.ResultsSection.*;
  */
 public class OWLClassExpressionEditorViewComponent extends AbstractOWLViewComponent {
 
-    public static final Marker marker = MarkerFactory.getMarker("DL Query");
+    private static final Marker marker = MarkerFactory.getMarker("DL Query");
 
     private final Logger logger = LoggerFactory.getLogger(OWLClassExpressionEditorViewComponent.class);
 

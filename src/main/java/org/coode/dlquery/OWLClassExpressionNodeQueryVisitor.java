@@ -24,13 +24,14 @@ import org.semanticweb.owlapi.reasoner.OWLReasoner;
  * www.cs.man.ac.uk/~horridgm<br><br>
  */
 public class OWLClassExpressionNodeQueryVisitor<O extends OWLObject> implements OWLClassExpressionNodeVisitor {
-    private OWLModelManager owlModelManager;
 
-    private OWLReasoner reasoner;
+    private final OWLModelManager owlModelManager;
 
-    private ReasonerQueryInvoker<O> queryInvoker;
+    private final OWLReasoner reasoner;
 
-    private Set<O> results;
+    private final ReasonerQueryInvoker<O> queryInvoker;
+
+    private final Set<O> results = new HashSet<>();
 
 
     public OWLClassExpressionNodeQueryVisitor(OWLModelManager manager, OWLReasoner reasoner,
@@ -38,7 +39,6 @@ public class OWLClassExpressionNodeQueryVisitor<O extends OWLObject> implements 
         this.owlModelManager = manager;
         this.reasoner = reasoner;
         this.queryInvoker = queryInvoker;
-        results = new HashSet<O>();
     }
 
 
@@ -57,7 +57,7 @@ public class OWLClassExpressionNodeQueryVisitor<O extends OWLObject> implements 
         Set<O> leftResults = results;
         node.getRightNode().accept(this);
         Set<O> rightResults = results;
-        results = new HashSet<O>();
+        results.clear();
         results.addAll(leftResults);
         results.remove(node.getRightNode().getClassExpression());
         results.removeAll(rightResults);
@@ -69,7 +69,7 @@ public class OWLClassExpressionNodeQueryVisitor<O extends OWLObject> implements 
         Set<O> leftResults = results;
         node.getRightNode().accept(this);
         Set<O> rightResults = results;
-        results = new HashSet<O>();
+        results.clear();
         results.addAll(leftResults);
         results.addAll(rightResults);
     }
@@ -83,13 +83,14 @@ public class OWLClassExpressionNodeQueryVisitor<O extends OWLObject> implements 
 
         Set<O> leftResults = queryInvoker.getAnswer(reasoner, leftDesc);
         Set<O> rightResults = queryInvoker.getAnswer(reasoner, negRightDesc);
-        results = new HashSet<O>();
+        results.clear();
         results.addAll(leftResults);
         results.removeAll(rightResults);
     }
 
 
     public void visit(OWLClassExpressionLeafNode node) {
-        results = queryInvoker.getAnswer(reasoner, node.getClassExpression());
+        results.clear();
+        results.addAll(queryInvoker.getAnswer(reasoner, node.getClassExpression()));
     }
 }

@@ -1,6 +1,8 @@
 package org.coode.dlquery;
 
 import org.protege.editor.core.ui.list.MListSectionHeader;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 /*
  * Copyright (C) 2007, University of Manchester
  *
@@ -33,11 +35,11 @@ import org.protege.editor.core.ui.list.MListSectionHeader;
  */
 public class DLQueryResultsSection implements MListSectionHeader {
 
-    private String label;
+    private final String label;
 
 
     public DLQueryResultsSection(String label) {
-        this.label = label;
+        this.label = checkNotNull(label);
     }
 
 

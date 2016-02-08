@@ -1,5 +1,7 @@
 package org.coode.dlquery;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Author: Matthew Horridge<br>
  * Stanford University<br>
@@ -21,10 +23,10 @@ public enum ResultsSection {
     INSTANCES("Instances");
 
 
-    private String displayName;
+    private final String displayName;
 
     private ResultsSection(String displayName) {
-        this.displayName = displayName;
+        this.displayName = checkNotNull(displayName);
     }
 
     public String getDisplayName() {
