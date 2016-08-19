@@ -4,6 +4,10 @@ import java.awt.Frame;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.*;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
@@ -14,22 +18,20 @@ import javax.swing.event.ListSelectionListener;
 import org.protege.editor.core.ui.list.MList;
 import org.protege.editor.core.ui.list.MListButton;
 import org.protege.editor.owl.OWLEditorKit;
+import org.protege.editor.owl.model.OWLEditorKitShortFormProvider;
 import org.protege.editor.owl.ui.OWLClassExpressionComparator;
 import org.protege.editor.owl.ui.explanation.ExplanationManager;
 import org.protege.editor.owl.ui.framelist.ExplainButton;
 import org.protege.editor.owl.ui.renderer.LinkedObjectComponent;
 import org.protege.editor.owl.ui.renderer.LinkedObjectComponentMediator;
 import org.protege.editor.owl.ui.view.Copyable;
-import org.semanticweb.owlapi.model.OWLAxiom;
-import org.semanticweb.owlapi.model.OWLClass;
-import org.semanticweb.owlapi.model.OWLClassExpression;
-import org.semanticweb.owlapi.model.OWLDataFactory;
-import org.semanticweb.owlapi.model.OWLIndividual;
-import org.semanticweb.owlapi.model.OWLNamedIndividual;
-import org.semanticweb.owlapi.model.OWLObject;
+import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.Node;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
+import org.semanticweb.owlapi.util.OWLEntityComparator;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.stream.Collectors.toList;
 import static org.coode.dlquery.ResultsSection.*;
 
 /**
@@ -48,6 +50,19 @@ public class ResultsList extends MList implements LinkedObjectComponent, Copyabl
 
     private final List<ChangeListener> copyListeners = new ArrayList<>();
 
+    private Predicate<OWLClass> superClassesResultFilter = (OWLClass) -> true;
+
+    private Predicate<OWLClass> directSuperClassesResultFilter = (OWLClass) -> true;
+
+    private Predicate<OWLClass> equivalentClassesResultFilter = (OWLClass) -> true;
+
+    private Predicate<OWLClass> directSubClassesResultFilter = (OWLClass) -> true;
+
+    private Predicate<OWLClass> subClassesResultFilter = (OWLClass) -> true;
+
+    private Predicate<OWLNamedIndividual> instancesResultFilter = (OWLNamedIndividual) -> true;
+
+
     public ResultsList(OWLEditorKit owlEditorKit) {
         this.owlEditorKit = owlEditorKit;
         setCellRenderer(new DLQueryListCellRenderer(owlEditorKit));
@@ -62,6 +77,26 @@ public class ResultsList extends MList implements LinkedObjectComponent, Copyabl
                 }
             }
         });
+    }
+
+    public void setSuperClassesResultFilter(Predicate<OWLClass> superClassesResultFilter) {
+        this.superClassesResultFilter = checkNotNull(superClassesResultFilter);
+    }
+
+    public void setDirectSuperClassesResultFilter(Predicate<OWLClass> directSuperClassesResultFilter) {
+        this.directSuperClassesResultFilter = checkNotNull(directSuperClassesResultFilter);
+    }
+
+    public void setDirectSubClassesResultFilter(Predicate<OWLClass> directSubClassesResultFilter) {
+        this.directSubClassesResultFilter = checkNotNull(directSubClassesResultFilter);
+    }
+
+    public void setSubClassesResultFilter(Predicate<OWLClass> subClassesResultFilter) {
+        this.subClassesResultFilter = checkNotNull(subClassesResultFilter);
+    }
+
+    public void setInstancesFilter(Predicate<OWLNamedIndividual> instancesResultFilter) {
+        this.instancesResultFilter = checkNotNull(instancesResultFilter);
     }
 
     public boolean isResultsSectionVisible(ResultsSection section) {
@@ -87,57 +122,64 @@ public class ResultsList extends MList implements LinkedObjectComponent, Copyabl
         List<Object> data = new ArrayList<>();
         OWLDataFactory factory = owlEditorKit.getOWLModelManager().getOWLDataFactory();
         OWLReasoner reasoner = owlEditorKit.getModelManager().getReasoner();
-        if (isResultsSectionVisible(EQUIVALENT_CLASSES)) {
-            final List<OWLClass> results = toSortedList(reasoner.getEquivalentClasses(description).getEntities());
-            data.add(new DLQueryResultsSection(EQUIVALENT_CLASSES.getDisplayName() + " (" + results.size() + ")"));
-            for (OWLClass cls : results) {
-                data.add(new DLQueryResultsSectionItem(cls, factory.getOWLEquivalentClassesAxiom(description, cls)));
-            }
-        }
-        if (isResultsSectionVisible(SUPER_CLASSES)) {
-            final List<OWLClass> results = toSortedList(reasoner.getSuperClasses(description, false).getFlattened());
-            data.add(new DLQueryResultsSection(SUPER_CLASSES.getDisplayName() + " (" + results.size() + ")"));
-            for (OWLClass superClass : results) {
-                data.add(new DLQueryResultsSectionItem(superClass, factory.getOWLSubClassOfAxiom(description, superClass)));
-            }
-        }
-        if (isResultsSectionVisible(DIRECT_SUPER_CLASSES)) {
-            final List<OWLClass> results = toSortedList(reasoner.getSuperClasses(description, true).getFlattened());
-            data.add(new DLQueryResultsSection(DIRECT_SUPER_CLASSES.getDisplayName() + " (" + results.size() + ")"));
-            for (OWLClass superClass : results) {
-                data.add(new DLQueryResultsSectionItem(superClass, factory.getOWLSubClassOfAxiom(description, superClass)));
-            }
-        }
-        if (isResultsSectionVisible(DIRECT_SUB_CLASSES)) {
-            final Set<OWLClass> resultSet = new HashSet<>();
-            for (Node<OWLClass> clsSet : reasoner.getSubClasses(description, true)) {
-                resultSet.addAll(clsSet.getEntities());
-            }
-            final List<OWLClass> results = toSortedList(resultSet);
-            data.add(new DLQueryResultsSection(DIRECT_SUB_CLASSES.getDisplayName() + " (" + results.size() + ")"));
-            for (OWLClass subClass : results) {
-                data.add(new DLQueryResultsSectionItem(subClass, factory.getOWLSubClassOfAxiom(subClass, description)));
-            }
-        }
-        if (isResultsSectionVisible(SUB_CLASSES)) {
-            final Set<OWLClass> resultSet = new HashSet<>();
-            for (Node<OWLClass> clsSet : reasoner.getSubClasses(description, false)) {
-                resultSet.addAll(clsSet.getEntities());
-            }
-            final List<OWLClass> results = toSortedList(resultSet);
-            data.add(new DLQueryResultsSection(SUB_CLASSES.getDisplayName() + " (" + results.size() + ")"));
-            for (OWLClass cls : results) {
-                data.add(new DLQueryResultsSectionItem(cls, factory.getOWLSubClassOfAxiom(cls, description)));
-            }
-        }
-        if (isResultsSectionVisible(INSTANCES)) {
-            final Set<OWLNamedIndividual> results = reasoner.getInstances(description, false).getFlattened();
-            data.add(new DLQueryResultsSection(INSTANCES.getDisplayName() + " (" + results.size() + ")"));
-            for (OWLIndividual ind : results) {
-                data.add(new DLQueryResultsSectionItem(ind, factory.getOWLClassAssertionAxiom(description, ind)));
-            }
-        }
+
+        addSectionIfVisible(
+                EQUIVALENT_CLASSES,
+                () -> reasoner.getEquivalentClasses(description).getEntities() ,
+                equivalentClassesResultFilter,
+                (cls) -> factory.getOWLEquivalentClassesAxiom(description, cls),
+                data
+        );
+        addSectionIfVisible(
+                SUPER_CLASSES,
+                () -> reasoner.getSuperClasses(description, false).getFlattened(),
+                superClassesResultFilter,
+                (superCls) -> factory.getOWLSubClassOfAxiom(description, superCls),
+                data
+        );
+        addSectionIfVisible(
+                DIRECT_SUPER_CLASSES,
+                () -> reasoner.getSuperClasses(description, true).getFlattened(),
+                directSuperClassesResultFilter,
+                (superCls) -> factory.getOWLSubClassOfAxiom(description, superCls),
+                data
+        );
+        addSectionIfVisible(
+                DIRECT_SUB_CLASSES,
+                () -> reasoner.getSubClasses(description, true).getFlattened(),
+                directSubClassesResultFilter,
+                (subCls) -> factory.getOWLSubClassOfAxiom(subCls, description),
+                data
+        );
+        addSectionIfVisible(
+                SUB_CLASSES,
+                () -> reasoner.getSubClasses(description, false).getFlattened(),
+                subClassesResultFilter,
+                (subCls) -> factory.getOWLSubClassOfAxiom(subCls, description),
+                data
+        );
+        addSectionIfVisible(
+                INSTANCES,
+                () -> reasoner.getInstances(description, false).getFlattened(),
+                instancesResultFilter,
+                (instance) -> factory.getOWLClassAssertionAxiom(description, instance),
+                data
+        );
         setListData(data.toArray());
+    }
+
+    private <E extends OWLEntity> void addSectionIfVisible(ResultsSection section, Supplier<Collection<E>> reasoner, Predicate<E> filter, Function<E, OWLAxiom> axiomFactory, List<Object> data) {
+        if(!isResultsSectionVisible(section)) {
+            return;
+        }
+        Collection<E> results = reasoner.get();
+        List<Object> resultsList = results.stream()
+                .filter(filter)
+                .sorted(new OWLEntityComparator(new OWLEditorKitShortFormProvider(owlEditorKit)))
+                .map(e -> new DLQueryResultsSectionItem(e, axiomFactory.apply(e)))
+                .collect(toList());
+        data.add(new DLQueryResultsSection(String.format("%s (%d of %d)", section.getDisplayName(), resultsList.size(), results.size())));
+        data.addAll(resultsList);
     }
 
     protected List<MListButton> getButtons(Object value) {
@@ -149,7 +191,7 @@ public class ResultsList extends MList implements LinkedObjectComponent, Copyabl
         if (!explanationManager.hasExplanation(axiom)) {
             return Collections.emptyList();
         }
-        return Arrays.asList(
+        return Collections.singletonList(
                 new ExplainButton(e -> {
                     Frame parent = (Frame) SwingUtilities.getAncestorOfClass(Frame.class, ResultsList.this);
                     explanationManager.handleExplain(parent, axiom);
