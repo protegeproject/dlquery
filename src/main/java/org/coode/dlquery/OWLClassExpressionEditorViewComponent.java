@@ -1,13 +1,14 @@
 package org.coode.dlquery;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
+import java.awt.*;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import org.protege.editor.core.prefs.Preferences;
 import org.protege.editor.core.prefs.PreferencesManager;
@@ -63,6 +64,8 @@ public class OWLClassExpressionEditorViewComponent extends AbstractOWLViewCompon
 
     private final JCheckBox showOWLNothingInResults = new JCheckBox("<html><body>Display owl:Nothing<br><span style=\"color: #808080; font-size: 0.8em;\">(in subclass results)</span></body></html>");
 
+    private final JTextField nameFilterField = new JTextField(8);
+
 
     private ExpressionEditor<OWLClassExpression> owlDescriptionEditor;
 
@@ -96,12 +99,16 @@ public class OWLClassExpressionEditorViewComponent extends AbstractOWLViewCompon
 
     private final Predicate<OWLClass> subsFilter = cls -> !cls.isOWLNothing() || showOWLNothingInResults.isSelected();
 
+    private final Timer timer = new Timer(400, e -> SwingUtilities.invokeLater(this::doQuery));
+
 
     protected void initialiseOWLView() throws Exception {
         setLayout(new BorderLayout(10, 10));
 
         showOWLThingInResults.setVerticalTextPosition(SwingConstants.TOP);
         showOWLNothingInResults.setVerticalTextPosition(SwingConstants.TOP);
+
+        timer.setRepeats(false);
 
         JComponent editorPanel = createQueryPanel();
         JComponent resultsPanel = createResultsPanel();
@@ -170,6 +177,12 @@ public class OWLClassExpressionEditorViewComponent extends AbstractOWLViewCompon
 
     private JComponent createOptionsBox() {
         Box optionsBox = new Box(BoxLayout.Y_AXIS);
+
+        JLabel queryForLabel = new JLabel("Query for");
+        queryForLabel.setFont(queryForLabel.getFont().deriveFont(Font.BOLD));
+        optionsBox.add(queryForLabel);
+        optionsBox.add(Box.createVerticalStrut(10));
+
         showDirectSuperClassesCheckBox.addActionListener(e -> {
             resultsList.setResultsSectionVisible(DIRECT_SUPER_CLASSES, showDirectSuperClassesCheckBox.isSelected());
             doQuery();
@@ -216,6 +229,36 @@ public class OWLClassExpressionEditorViewComponent extends AbstractOWLViewCompon
         optionsBox.add(Box.createVerticalStrut(20));
         optionsBox.add(new JSeparator());
         optionsBox.add(Box.createVerticalStrut(20));
+
+
+        JLabel filtersLabel = new JLabel("Result filters");
+        filtersLabel.setFont(filtersLabel.getFont().deriveFont(Font.BOLD));
+        optionsBox.add(filtersLabel);
+
+        optionsBox.add(Box.createVerticalStrut(10));
+
+        JLabel nameFilterLabel = new JLabel("Name contains");
+        optionsBox.add(Box.createVerticalStrut(3));
+        optionsBox.add(nameFilterLabel);
+        optionsBox.add(nameFilterField);
+        nameFilterField.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                scheduleQuery();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                scheduleQuery();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+            }
+        });
+
+        optionsBox.add(Box.createVerticalStrut(20));
+
         optionsBox.add(showOWLThingInResults);
         Preferences preferences = PreferencesManager.getInstance().getApplicationPreferences("DLQuery");
 
@@ -224,6 +267,7 @@ public class OWLClassExpressionEditorViewComponent extends AbstractOWLViewCompon
             preferences.putBoolean(SHOW_OWL_THING_IN_RESULTS_KEY, showOWLThingInResults.isSelected());
             doQuery();
         });
+        showOWLThingInResults.setHorizontalAlignment(SwingConstants.LEFT);
         optionsBox.add(Box.createVerticalStrut(3));
         optionsBox.add(showOWLNothingInResults);
         showOWLNothingInResults.setSelected(preferences.getBoolean(SHOW_OWL_NOTHING_IN_RESULTS_KEY, true));
@@ -231,6 +275,9 @@ public class OWLClassExpressionEditorViewComponent extends AbstractOWLViewCompon
             preferences.putBoolean(SHOW_OWL_NOTHING_IN_RESULTS_KEY, showOWLNothingInResults.isSelected());
             doQuery();
         });
+
+
+
         return optionsBox;
     }
 
@@ -249,6 +296,9 @@ public class OWLClassExpressionEditorViewComponent extends AbstractOWLViewCompon
         showIndividualsCheckBox.setSelected(resultsList.isResultsSectionVisible(INSTANCES));
     }
 
+    private void scheduleQuery() {
+        timer.restart();
+    }
 
     private void doQuery() {
         if (isShowing()) {
@@ -264,6 +314,8 @@ public class OWLClassExpressionEditorViewComponent extends AbstractOWLViewCompon
 
                     resultsList.setDirectSubClassesResultFilter(subsFilter);
                     resultsList.setSubClassesResultFilter(subsFilter);
+
+                    resultsList.setNameFilter(nameFilterField.getText().trim());
 
                     resultsList.setOWLClassExpression(desc);
                 }

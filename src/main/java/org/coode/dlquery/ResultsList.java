@@ -7,6 +7,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
@@ -62,9 +63,13 @@ public class ResultsList extends MList implements LinkedObjectComponent, Copyabl
 
     private Predicate<OWLNamedIndividual> instancesResultFilter = (OWLNamedIndividual) -> true;
 
+    private String nameFilter = "";
+
+    private Predicate<OWLEntity> nameResultFilter;
 
     public ResultsList(OWLEditorKit owlEditorKit) {
         this.owlEditorKit = owlEditorKit;
+        this.nameResultFilter = (e) -> nameFilter.isEmpty() || owlEditorKit.getOWLModelManager().getRendering(e).contains(nameFilter);
         setCellRenderer(new DLQueryListCellRenderer(owlEditorKit));
         mediator = new LinkedObjectComponentMediator(owlEditorKit, this);
         getSelectionModel().addListSelectionListener(new ListSelectionListener() {
@@ -175,6 +180,7 @@ public class ResultsList extends MList implements LinkedObjectComponent, Copyabl
         Collection<E> results = reasoner.get();
         List<Object> resultsList = results.stream()
                 .filter(filter)
+                .filter(nameResultFilter)
                 .sorted(new OWLEntityComparator(new OWLEditorKitShortFormProvider(owlEditorKit)))
                 .map(e -> new DLQueryResultsSectionItem(e, axiomFactory.apply(e)))
                 .collect(toList());
@@ -255,5 +261,9 @@ public class ResultsList extends MList implements LinkedObjectComponent, Copyabl
 
     public void removeChangeListener(ChangeListener changeListener) {
         copyListeners.remove(changeListener);
+    }
+
+    public void setNameFilter(String nameFilter) {
+        this.nameFilter = checkNotNull(nameFilter);
     }
 }
