@@ -263,6 +263,7 @@ public class OWLClassExpressionEditorViewComponent extends AbstractOWLViewCompon
         Preferences preferences = PreferencesManager.getInstance().getApplicationPreferences("DLQuery");
 
         showOWLThingInResults.setSelected(preferences.getBoolean(SHOW_OWL_THING_IN_RESULTS_KEY, true));
+        showOWLThingInResults.setBorder(BorderFactory.createEmptyBorder(0, 0, 7, 0));
         showOWLThingInResults.addActionListener(e -> {
             preferences.putBoolean(SHOW_OWL_THING_IN_RESULTS_KEY, showOWLThingInResults.isSelected());
             doQuery();
@@ -271,6 +272,7 @@ public class OWLClassExpressionEditorViewComponent extends AbstractOWLViewCompon
         optionsBox.add(Box.createVerticalStrut(3));
         optionsBox.add(showOWLNothingInResults);
         showOWLNothingInResults.setSelected(preferences.getBoolean(SHOW_OWL_NOTHING_IN_RESULTS_KEY, true));
+        showOWLNothingInResults.setBorder(BorderFactory.createEmptyBorder());
         showOWLNothingInResults.addActionListener(e -> {
             preferences.putBoolean(SHOW_OWL_NOTHING_IN_RESULTS_KEY, showOWLNothingInResults.isSelected());
             doQuery();
