@@ -4,6 +4,7 @@ import java.awt.Frame;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -16,6 +17,8 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import com.google.common.base.Stopwatch;
+import org.protege.editor.core.log.LogBanner;
 import org.protege.editor.core.ui.list.MList;
 import org.protege.editor.core.ui.list.MListButton;
 import org.protege.editor.owl.OWLEditorKit;
@@ -30,6 +33,8 @@ import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.Node;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.util.OWLEntityComparator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.util.stream.Collectors.toList;
@@ -42,6 +47,8 @@ import static org.coode.dlquery.ResultsSection.*;
  * Date: 27-Feb-2007<br><br>
  */
 public class ResultsList extends MList implements LinkedObjectComponent, Copyable {
+
+    private final static Logger logger = LoggerFactory.getLogger(ResultsList.class);
 
     private final OWLEditorKit owlEditorKit;
 
@@ -124,6 +131,8 @@ public class ResultsList extends MList implements LinkedObjectComponent, Copyabl
     }
 
     public void setOWLClassExpression(OWLClassExpression description) {
+
+        logger.info(LogBanner.start("Executing DL Query"));
         List<Object> data = new ArrayList<>();
         OWLDataFactory factory = owlEditorKit.getOWLModelManager().getOWLDataFactory();
         OWLReasoner reasoner = owlEditorKit.getModelManager().getReasoner();
@@ -171,13 +180,17 @@ public class ResultsList extends MList implements LinkedObjectComponent, Copyabl
                 data
         );
         setListData(data.toArray());
+        logger.info(LogBanner.end());
     }
 
     private <E extends OWLEntity> void addSectionIfVisible(ResultsSection section, Supplier<Collection<E>> reasoner, Predicate<E> filter, Function<E, OWLAxiom> axiomFactory, List<Object> data) {
         if(!isResultsSectionVisible(section)) {
             return;
         }
+        Stopwatch stopwatch = Stopwatch.createStarted();
         Collection<E> results = reasoner.get();
+        stopwatch.stop();
+        logger.info("Computed results for {} in {} ms", section.getDisplayName(), stopwatch.elapsed(TimeUnit.MILLISECONDS));
         List<Object> resultsList = results.stream()
                 .filter(filter)
                 .filter(nameResultFilter)
