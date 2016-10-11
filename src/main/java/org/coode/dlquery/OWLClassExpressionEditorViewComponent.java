@@ -14,11 +14,13 @@ import org.protege.editor.core.prefs.Preferences;
 import org.protege.editor.core.prefs.PreferencesManager;
 import org.protege.editor.core.ui.util.ComponentFactory;
 import org.protege.editor.owl.model.cache.OWLExpressionUserCache;
+import org.protege.editor.owl.model.classexpression.OWLExpressionParserException;
 import org.protege.editor.owl.model.entity.OWLEntityCreationSet;
 import org.protege.editor.owl.model.event.EventType;
 import org.protege.editor.owl.model.event.OWLModelManagerListener;
 import org.protege.editor.owl.model.inference.OWLReasonerManager;
 import org.protege.editor.owl.model.inference.ReasonerUtilities;
+import org.protege.editor.owl.model.parser.OWLParseException;
 import org.protege.editor.owl.ui.CreateDefinedClassPanel;
 import org.protege.editor.owl.ui.clsdescriptioneditor.ExpressionEditor;
 import org.protege.editor.owl.ui.clsdescriptioneditor.OWLExpressionChecker;
@@ -177,6 +179,7 @@ public class OWLClassExpressionEditorViewComponent extends AbstractOWLViewCompon
 
     private JComponent createOptionsBox() {
         Box optionsBox = new Box(BoxLayout.Y_AXIS);
+        optionsBox.setMinimumSize(new Dimension(50, 50));
 
         JLabel queryForLabel = new JLabel("Query for");
         queryForLabel.setFont(queryForLabel.getFont().deriveFont(Font.BOLD));
@@ -321,7 +324,14 @@ public class OWLClassExpressionEditorViewComponent extends AbstractOWLViewCompon
 
                     resultsList.setOWLClassExpression(desc);
                 }
-            } catch (OWLException e) {
+            }
+            catch (OWLExpressionParserException e) {
+                JOptionPane.showMessageDialog(this,
+                                              e.getMessage(),
+                                              "Invalid expression",
+                                              JOptionPane.ERROR_MESSAGE);
+            }
+            catch (OWLException e) {
                 logger.error(marker, "An error occurred whilst executing the DL query: {}", e.getMessage(), e);
             }
             requiresRefresh = false;
