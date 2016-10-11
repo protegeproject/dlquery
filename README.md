@@ -1,6 +1,7 @@
 dlquery
 =======
 
-A [Protege Desktop](http://protege.stanford.edu/products.php#desktop-protege) plug-in that provides an easy interface for searching a classified OWL ontology.
+A [Protege](http://protege.stanford.edu/products.php#desktop-protege) plugin that provides an interface for querying
+OWL ontologies.
 
 User's guide is [available](http://protegewiki.stanford.edu/wiki/DLQueryTab) on the Protege Wiki.
