@@ -79,13 +79,11 @@ public class ResultsList extends MList implements LinkedObjectComponent, Copyabl
         this.nameResultFilter = (e) -> nameFilter.isEmpty() || owlEditorKit.getOWLModelManager().getRendering(e).contains(nameFilter);
         setCellRenderer(new DLQueryListCellRenderer(owlEditorKit));
         mediator = new LinkedObjectComponentMediator(owlEditorKit, this);
-        getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-            public void valueChanged(ListSelectionEvent event) {
-                if (!event.getValueIsAdjusting()) {
-                    ChangeEvent ev = new ChangeEvent(ResultsList.this);
-                    for (ChangeListener l : new ArrayList<>(copyListeners)) {
-                        l.stateChanged(ev);
-                    }
+        getSelectionModel().addListSelectionListener(event -> {
+            if (!event.getValueIsAdjusting()) {
+                ChangeEvent ev = new ChangeEvent(ResultsList.this);
+                for (ChangeListener l : new ArrayList<>(copyListeners)) {
+                    l.stateChanged(ev);
                 }
             }
         });
