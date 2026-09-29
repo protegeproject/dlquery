@@ -17,7 +17,6 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import com.google.common.base.Stopwatch;
 import org.protege.editor.core.log.LogBanner;
 import org.protege.editor.core.ui.list.MList;
 import org.protege.editor.core.ui.list.MListButton;
@@ -36,7 +35,7 @@ import org.semanticweb.owlapi.util.OWLEntityComparator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 import static org.coode.dlquery.ResultsSection.*;
 
@@ -90,23 +89,23 @@ public class ResultsList extends MList implements LinkedObjectComponent, Copyabl
     }
 
     public void setSuperClassesResultFilter(Predicate<OWLClass> superClassesResultFilter) {
-        this.superClassesResultFilter = checkNotNull(superClassesResultFilter);
+        this.superClassesResultFilter = requireNonNull(superClassesResultFilter);
     }
 
     public void setDirectSuperClassesResultFilter(Predicate<OWLClass> directSuperClassesResultFilter) {
-        this.directSuperClassesResultFilter = checkNotNull(directSuperClassesResultFilter);
+        this.directSuperClassesResultFilter = requireNonNull(directSuperClassesResultFilter);
     }
 
     public void setDirectSubClassesResultFilter(Predicate<OWLClass> directSubClassesResultFilter) {
-        this.directSubClassesResultFilter = checkNotNull(directSubClassesResultFilter);
+        this.directSubClassesResultFilter = requireNonNull(directSubClassesResultFilter);
     }
 
     public void setSubClassesResultFilter(Predicate<OWLClass> subClassesResultFilter) {
-        this.subClassesResultFilter = checkNotNull(subClassesResultFilter);
+        this.subClassesResultFilter = requireNonNull(subClassesResultFilter);
     }
 
     public void setInstancesFilter(Predicate<OWLNamedIndividual> instancesResultFilter) {
-        this.instancesResultFilter = checkNotNull(instancesResultFilter);
+        this.instancesResultFilter = requireNonNull(instancesResultFilter);
     }
 
     public boolean isResultsSectionVisible(ResultsSection section) {
@@ -185,10 +184,10 @@ public class ResultsList extends MList implements LinkedObjectComponent, Copyabl
         if(!isResultsSectionVisible(section)) {
             return;
         }
-        Stopwatch stopwatch = Stopwatch.createStarted();
+        long start = System.nanoTime();
         Collection<E> results = reasoner.get();
-        stopwatch.stop();
-        logger.info("Computed results for {} in {} ms", section.getDisplayName(), stopwatch.elapsed(TimeUnit.MILLISECONDS));
+        long elapsedMillis = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
+        logger.info("Computed results for {} in {} ms", section.getDisplayName(), elapsedMillis);
         List<Object> resultsList = results.stream()
                 .filter(filter)
                 .filter(nameResultFilter)
@@ -275,6 +274,6 @@ public class ResultsList extends MList implements LinkedObjectComponent, Copyabl
     }
 
     public void setNameFilter(String nameFilter) {
-        this.nameFilter = checkNotNull(nameFilter);
+        this.nameFilter = requireNonNull(nameFilter);
     }
 }

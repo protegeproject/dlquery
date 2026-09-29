@@ -1,9 +1,6 @@
 package org.coode.dlquery;
 
 import java.awt.*;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Predicate;
 
 import javax.swing.*;
@@ -15,7 +12,6 @@ import org.protege.editor.core.prefs.PreferencesManager;
 import org.protege.editor.core.ui.util.ComponentFactory;
 import org.protege.editor.owl.model.cache.OWLExpressionUserCache;
 import org.protege.editor.owl.model.classexpression.OWLExpressionParserException;
-import org.protege.editor.owl.model.entity.OWLEntityCreationSet;
 import org.protege.editor.owl.model.event.EventType;
 import org.protege.editor.owl.model.event.OWLModelManagerListener;
 import org.protege.editor.owl.model.inference.OWLReasonerManager;
@@ -25,13 +21,9 @@ import org.protege.editor.owl.ui.CreateDefinedClassPanel;
 import org.protege.editor.owl.ui.clsdescriptioneditor.ExpressionEditor;
 import org.protege.editor.owl.ui.clsdescriptioneditor.OWLExpressionChecker;
 import org.protege.editor.owl.ui.view.AbstractOWLViewComponent;
-import org.semanticweb.owlapi.model.AddAxiom;
-import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;
-import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLException;
-import org.semanticweb.owlapi.model.OWLOntologyChange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
@@ -345,17 +337,13 @@ public class OWLClassExpressionEditorViewComponent extends AbstractOWLViewCompon
     private void doAdd() {
         try {
             OWLClassExpression desc = owlDescriptionEditor.createObject();
-            OWLEntityCreationSet<OWLClass> creationSet = CreateDefinedClassPanel.showDialog(desc, getOWLEditorKit());
-            if (creationSet != null) {
-                List<OWLOntologyChange> changes = new ArrayList<>(creationSet.getOntologyChanges());
-                OWLDataFactory factory = getOWLModelManager().getOWLDataFactory();
-                OWLAxiom equiv = factory.getOWLEquivalentClassesAxiom(creationSet.getOWLEntity(), desc);
-                changes.add(new AddAxiom(getOWLModelManager().getActiveOntology(), equiv));
-                getOWLModelManager().applyChanges(changes);
-                if (isSynchronizing()) {
-                    getOWLEditorKit().getOWLWorkspace().getOWLSelectionModel().setSelectedEntity(creationSet.getOWLEntity());
-                }
-            }
+            CreateDefinedClassPanel.showDialogForDefinedClass(desc, getOWLEditorKit())
+                    .ifPresent(creationSet -> {
+                        getOWLModelManager().applyChanges(creationSet.getOntologyChanges());
+                        if (isSynchronizing()) {
+                            getOWLEditorKit().getOWLWorkspace().getOWLSelectionModel().setSelectedEntity(creationSet.getOWLEntity());
+                        }
+                    });
         } catch (OWLException e) {
             logger.error(marker, "An error occurred whilst adding the class definition: {}", e.getMessage(), e);
         }

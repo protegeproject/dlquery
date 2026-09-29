@@ -1,6 +1,6 @@
 package org.coode.dlquery;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Author: Matthew Horridge<br>
@@ -26,7 +26,7 @@ public enum ResultsSection {
     private final String displayName;
 
     private ResultsSection(String displayName) {
-        this.displayName = checkNotNull(displayName);
+        this.displayName = requireNonNull(displayName);
     }
 
     public String getDisplayName() {
