@@ -134,9 +134,11 @@ public class OWLClassExpressionEditorViewComponent extends AbstractOWLViewCompon
         final OWLExpressionChecker<OWLClassExpression> checker = getOWLModelManager().getOWLExpressionCheckerFactory().getOWLClassExpressionChecker();
         owlDescriptionEditor = new ExpressionEditor<>(getOWLEditorKit(), checker);
         executeButton.setEnabled(false);
+        addButton.setEnabled(false);
         owlDescriptionEditor.addStatusChangedListener(newState -> {
-            executeButton.setEnabled(newState && !owlDescriptionEditor.getText().trim().isEmpty());
-            addButton.setEnabled(newState);
+            boolean hasQuery = !owlDescriptionEditor.getText().trim().isEmpty();
+            executeButton.setEnabled(newState && hasQuery);
+            addButton.setEnabled(newState && hasQuery && isAnonymousClassExpression());
         });
         owlDescriptionEditor.setPreferredSize(new Dimension(100, 50));
 
@@ -156,6 +158,16 @@ public class OWLClassExpressionEditorViewComponent extends AbstractOWLViewCompon
                         "Query (class expression)"),
                 BorderFactory.createEmptyBorder(3, 3, 3, 3)));
         return editorPanel;
+    }
+
+
+    private boolean isAnonymousClassExpression() {
+        try {
+            return owlDescriptionEditor.createObject().isAnonymous();
+        }
+        catch (OWLException e) {
+            return false;
+        }
     }
 
 
