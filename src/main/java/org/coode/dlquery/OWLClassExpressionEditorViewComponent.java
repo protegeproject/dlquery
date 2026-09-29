@@ -4,11 +4,13 @@ import java.awt.*;
 import java.util.function.Predicate;
 
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import org.protege.editor.core.prefs.Preferences;
 import org.protege.editor.core.prefs.PreferencesManager;
+import org.protege.editor.core.ui.split.ViewSplitPane;
 import org.protege.editor.core.ui.util.ComponentFactory;
 import org.protege.editor.owl.model.cache.OWLExpressionUserCache;
 import org.protege.editor.owl.model.classexpression.OWLExpressionParserException;
@@ -111,7 +113,9 @@ public class OWLClassExpressionEditorViewComponent extends AbstractOWLViewCompon
         optionsBoxHolder.add(optionsBox, BorderLayout.NORTH);
         resultsPanel.add(optionsBoxHolder, BorderLayout.EAST);
 
-        JSplitPane splitter = new JSplitPane(JSplitPane.VERTICAL_SPLIT, editorPanel, resultsPanel);
+        JSplitPane splitter = new ViewSplitPane(JSplitPane.VERTICAL_SPLIT);
+        splitter.setTopComponent(editorPanel);
+        splitter.setBottomComponent(resultsPanel);
         splitter.setDividerLocation(0.3);
 
         add(splitter, BorderLayout.CENTER);
@@ -129,7 +133,7 @@ public class OWLClassExpressionEditorViewComponent extends AbstractOWLViewCompon
 
 
     private JComponent createQueryPanel() {
-        JPanel editorPanel = new JPanel(new BorderLayout());
+        JPanel editorPanel = new JPanel(new BorderLayout(0, 10));
 
         final OWLExpressionChecker<OWLClassExpression> checker = getOWLModelManager().getOWLExpressionCheckerFactory().getOWLClassExpressionChecker();
         owlDescriptionEditor = new ExpressionEditor<>(getOWLEditorKit(), checker);
@@ -143,7 +147,7 @@ public class OWLClassExpressionEditorViewComponent extends AbstractOWLViewCompon
         owlDescriptionEditor.setPreferredSize(new Dimension(100, 50));
 
         editorPanel.add(ComponentFactory.createScrollPane(owlDescriptionEditor), BorderLayout.CENTER);
-        JPanel buttonHolder = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel buttonHolder = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
         executeButton.setToolTipText("Run the query using the active reasoner");
         executeButton.addActionListener(e -> doQuery());
 
@@ -154,10 +158,12 @@ public class OWLClassExpressionEditorViewComponent extends AbstractOWLViewCompon
         buttonHolder.add(addButton);
 
         editorPanel.add(buttonHolder, BorderLayout.SOUTH);
+        TitledBorder queryBorder = BorderFactory.createTitledBorder(
+                BorderFactory.createEmptyBorder(),
+                "Query (class expression)");
+        queryBorder.setTitleFont(queryBorder.getTitleFont().deriveFont(Font.BOLD));
         editorPanel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createTitledBorder(
-                        BorderFactory.createEmptyBorder(),
-                        "Query (class expression)"),
+                queryBorder,
                 BorderFactory.createEmptyBorder(3, 3, 3, 3)));
         return editorPanel;
     }
@@ -175,9 +181,15 @@ public class OWLClassExpressionEditorViewComponent extends AbstractOWLViewCompon
 
     private JComponent createResultsPanel() {
         JComponent resultsPanel = new JPanel(new BorderLayout(10, 10));
+        TitledBorder resultsBorder = BorderFactory.createTitledBorder(
+                BorderFactory.createEmptyBorder(),
+                "Query results");
+        resultsBorder.setTitleFont(resultsBorder.getTitleFont().deriveFont(Font.BOLD));
         resultsPanel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), "Query results"),
-                BorderFactory.createEmptyBorder(3, 3, 3, 3)));
+                BorderFactory.createEmptyBorder(6, 0, 0, 0),
+                BorderFactory.createCompoundBorder(
+                        resultsBorder,
+                        BorderFactory.createEmptyBorder(3, 3, 3, 3))));
         resultsList = new ResultsList(getOWLEditorKit());
         resultsPanel.add(ComponentFactory.createScrollPane(resultsList));
         return resultsPanel;
