@@ -146,7 +146,10 @@ public class OWLClassExpressionEditorViewComponent extends AbstractOWLViewCompon
         });
         owlDescriptionEditor.setPreferredSize(new Dimension(100, 50));
 
-        editorPanel.add(ComponentFactory.createScrollPane(owlDescriptionEditor), BorderLayout.CENTER);
+        JPanel editorHolder = new JPanel(new BorderLayout());
+        editorHolder.setBorder(BorderFactory.createEmptyBorder(7, 0, 0, 0));
+        editorHolder.add(ComponentFactory.createScrollPane(owlDescriptionEditor));
+        editorPanel.add(editorHolder, BorderLayout.CENTER);
         JPanel buttonHolder = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
         executeButton.setToolTipText("Run the query using the active reasoner");
         executeButton.addActionListener(e -> doQuery());
@@ -181,15 +184,10 @@ public class OWLClassExpressionEditorViewComponent extends AbstractOWLViewCompon
 
     private JComponent createResultsPanel() {
         JComponent resultsPanel = new JPanel(new BorderLayout(10, 10));
-        TitledBorder resultsBorder = BorderFactory.createTitledBorder(
-                BorderFactory.createEmptyBorder(),
-                "Query results");
-        resultsBorder.setTitleFont(resultsBorder.getTitleFont().deriveFont(Font.BOLD));
-        resultsPanel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createEmptyBorder(6, 0, 0, 0),
-                BorderFactory.createCompoundBorder(
-                        resultsBorder,
-                        BorderFactory.createEmptyBorder(3, 3, 3, 3))));
+        resultsPanel.setBorder(BorderFactory.createEmptyBorder(6, 3, 0, 3));
+        JLabel resultsLabel = new JLabel("Query results");
+        resultsLabel.setFont(resultsLabel.getFont().deriveFont(Font.BOLD));
+        resultsPanel.add(resultsLabel, BorderLayout.NORTH);
         resultsList = new ResultsList(getOWLEditorKit());
         resultsPanel.add(ComponentFactory.createScrollPane(resultsList));
         return resultsPanel;
