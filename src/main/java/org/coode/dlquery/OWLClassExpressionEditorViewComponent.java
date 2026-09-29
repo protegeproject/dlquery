@@ -133,8 +133,9 @@ public class OWLClassExpressionEditorViewComponent extends AbstractOWLViewCompon
 
         final OWLExpressionChecker<OWLClassExpression> checker = getOWLModelManager().getOWLExpressionCheckerFactory().getOWLClassExpressionChecker();
         owlDescriptionEditor = new ExpressionEditor<>(getOWLEditorKit(), checker);
+        executeButton.setEnabled(false);
         owlDescriptionEditor.addStatusChangedListener(newState -> {
-            executeButton.setEnabled(newState);
+            executeButton.setEnabled(newState && !owlDescriptionEditor.getText().trim().isEmpty());
             addButton.setEnabled(newState);
         });
         owlDescriptionEditor.setPreferredSize(new Dimension(100, 50));
