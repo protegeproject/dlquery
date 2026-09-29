@@ -136,7 +136,7 @@ public class OWLClassExpressionEditorViewComponent extends AbstractOWLViewCompon
         JPanel editorPanel = new JPanel(new BorderLayout(0, 10));
 
         final OWLExpressionChecker<OWLClassExpression> checker = getOWLModelManager().getOWLExpressionCheckerFactory().getOWLClassExpressionChecker();
-        owlDescriptionEditor = new ExpressionEditor<>(getOWLEditorKit(), checker);
+        owlDescriptionEditor = createQueryEditor(checker);
         executeButton.setEnabled(false);
         addButton.setEnabled(false);
         owlDescriptionEditor.addStatusChangedListener(newState -> {
@@ -163,12 +163,40 @@ public class OWLClassExpressionEditorViewComponent extends AbstractOWLViewCompon
         editorPanel.add(buttonHolder, BorderLayout.SOUTH);
         TitledBorder queryBorder = BorderFactory.createTitledBorder(
                 BorderFactory.createEmptyBorder(),
-                "Query (class expression)");
+                "Query");
         queryBorder.setTitleFont(queryBorder.getTitleFont().deriveFont(Font.BOLD));
         editorPanel.setBorder(BorderFactory.createCompoundBorder(
                 queryBorder,
                 BorderFactory.createEmptyBorder(3, 3, 3, 3)));
         return editorPanel;
+    }
+
+
+    private ExpressionEditor<OWLClassExpression> createQueryEditor(
+            OWLExpressionChecker<OWLClassExpression> checker) {
+        return new ExpressionEditor<>(getOWLEditorKit(), checker) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                if (getText().isEmpty()) {
+                    Graphics placeholderGraphics = g.create();
+                    try {
+                        placeholderGraphics.setColor(getDisabledTextColor());
+                        Font placeholderFont = getFont().deriveFont(getFont().getSize2D() + 2);
+                        placeholderGraphics.setFont(placeholderFont);
+                        FontMetrics fontMetrics = placeholderGraphics.getFontMetrics(placeholderFont);
+                        Insets insets = getInsets();
+                        placeholderGraphics.drawString(
+                                "Enter a class expression",
+                                insets.left + 2,
+                                insets.top + fontMetrics.getAscent());
+                    }
+                    finally {
+                        placeholderGraphics.dispose();
+                    }
+                }
+            }
+        };
     }
 
 
