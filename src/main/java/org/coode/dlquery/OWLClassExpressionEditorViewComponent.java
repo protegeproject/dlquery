@@ -1,21 +1,19 @@
 package org.coode.dlquery;
 
 import java.awt.*;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Predicate;
 
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import org.protege.editor.core.prefs.Preferences;
 import org.protege.editor.core.prefs.PreferencesManager;
+import org.protege.editor.core.ui.split.ViewSplitPane;
 import org.protege.editor.core.ui.util.ComponentFactory;
 import org.protege.editor.owl.model.cache.OWLExpressionUserCache;
 import org.protege.editor.owl.model.classexpression.OWLExpressionParserException;
-import org.protege.editor.owl.model.entity.OWLEntityCreationSet;
 import org.protege.editor.owl.model.event.EventType;
 import org.protege.editor.owl.model.event.OWLModelManagerListener;
 import org.protege.editor.owl.model.inference.OWLReasonerManager;
@@ -25,13 +23,9 @@ import org.protege.editor.owl.ui.CreateDefinedClassPanel;
 import org.protege.editor.owl.ui.clsdescriptioneditor.ExpressionEditor;
 import org.protege.editor.owl.ui.clsdescriptioneditor.OWLExpressionChecker;
 import org.protege.editor.owl.ui.view.AbstractOWLViewComponent;
-import org.semanticweb.owlapi.model.AddAxiom;
-import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;
-import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLException;
-import org.semanticweb.owlapi.model.OWLOntologyChange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
@@ -87,7 +81,7 @@ public class OWLClassExpressionEditorViewComponent extends AbstractOWLViewCompon
 
     private final JButton executeButton = new JButton("Execute");
 
-    private final JButton addButton = new JButton("Add to ontology");
+    private final JButton addButton = new JButton("Add to ontology…");
 
     private final OWLModelManagerListener listener = event -> {
         if (event.isType(EventType.ONTOLOGY_CLASSIFIED)) {
@@ -119,7 +113,9 @@ public class OWLClassExpressionEditorViewComponent extends AbstractOWLViewCompon
         optionsBoxHolder.add(optionsBox, BorderLayout.NORTH);
         resultsPanel.add(optionsBoxHolder, BorderLayout.EAST);
 
-        JSplitPane splitter = new JSplitPane(JSplitPane.VERTICAL_SPLIT, editorPanel, resultsPanel);
+        JSplitPane splitter = new ViewSplitPane(JSplitPane.VERTICAL_SPLIT);
+        splitter.setTopComponent(editorPanel);
+        splitter.setBottomComponent(resultsPanel);
         splitter.setDividerLocation(0.3);
 
         add(splitter, BorderLayout.CENTER);
@@ -137,40 +133,89 @@ public class OWLClassExpressionEditorViewComponent extends AbstractOWLViewCompon
 
 
     private JComponent createQueryPanel() {
-        JPanel editorPanel = new JPanel(new BorderLayout());
+        JPanel editorPanel = new JPanel(new BorderLayout(0, 10));
 
         final OWLExpressionChecker<OWLClassExpression> checker = getOWLModelManager().getOWLExpressionCheckerFactory().getOWLClassExpressionChecker();
-        owlDescriptionEditor = new ExpressionEditor<>(getOWLEditorKit(), checker);
+        owlDescriptionEditor = createQueryEditor(checker);
+        executeButton.setEnabled(false);
+        addButton.setEnabled(false);
         owlDescriptionEditor.addStatusChangedListener(newState -> {
-            executeButton.setEnabled(newState);
-            addButton.setEnabled(newState);
+            boolean hasQuery = !owlDescriptionEditor.getText().trim().isEmpty();
+            executeButton.setEnabled(newState && hasQuery);
+            addButton.setEnabled(newState && hasQuery && isAnonymousClassExpression());
         });
         owlDescriptionEditor.setPreferredSize(new Dimension(100, 50));
 
-        editorPanel.add(ComponentFactory.createScrollPane(owlDescriptionEditor), BorderLayout.CENTER);
-        JPanel buttonHolder = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel editorHolder = new JPanel(new BorderLayout());
+        editorHolder.setBorder(BorderFactory.createEmptyBorder(7, 0, 0, 0));
+        editorHolder.add(ComponentFactory.createScrollPane(owlDescriptionEditor));
+        editorPanel.add(editorHolder, BorderLayout.CENTER);
+        JPanel buttonHolder = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
+        executeButton.setToolTipText("Run the query using the active reasoner");
         executeButton.addActionListener(e -> doQuery());
 
+        addButton.setToolTipText("Create a named class equivalent to this expression");
         addButton.addActionListener(e -> doAdd());
 
         buttonHolder.add(executeButton);
         buttonHolder.add(addButton);
 
         editorPanel.add(buttonHolder, BorderLayout.SOUTH);
+        TitledBorder queryBorder = BorderFactory.createTitledBorder(
+                BorderFactory.createEmptyBorder(),
+                "Query");
+        queryBorder.setTitleFont(queryBorder.getTitleFont().deriveFont(Font.BOLD));
         editorPanel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createTitledBorder(
-                        BorderFactory.createEmptyBorder(),
-                        "Query (class expression)"),
+                queryBorder,
                 BorderFactory.createEmptyBorder(3, 3, 3, 3)));
         return editorPanel;
     }
 
 
+    private ExpressionEditor<OWLClassExpression> createQueryEditor(
+            OWLExpressionChecker<OWLClassExpression> checker) {
+        return new ExpressionEditor<>(getOWLEditorKit(), checker) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                if (getText().isEmpty()) {
+                    Graphics placeholderGraphics = g.create();
+                    try {
+                        placeholderGraphics.setColor(getDisabledTextColor());
+                        Font placeholderFont = getFont().deriveFont(getFont().getSize2D() + 2);
+                        placeholderGraphics.setFont(placeholderFont);
+                        FontMetrics fontMetrics = placeholderGraphics.getFontMetrics(placeholderFont);
+                        Insets insets = getInsets();
+                        placeholderGraphics.drawString(
+                                "Enter a class expression",
+                                insets.left + 2,
+                                insets.top + fontMetrics.getAscent());
+                    }
+                    finally {
+                        placeholderGraphics.dispose();
+                    }
+                }
+            }
+        };
+    }
+
+
+    private boolean isAnonymousClassExpression() {
+        try {
+            return owlDescriptionEditor.createObject().isAnonymous();
+        }
+        catch (OWLException e) {
+            return false;
+        }
+    }
+
+
     private JComponent createResultsPanel() {
         JComponent resultsPanel = new JPanel(new BorderLayout(10, 10));
-        resultsPanel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), "Query results"),
-                BorderFactory.createEmptyBorder(3, 3, 3, 3)));
+        resultsPanel.setBorder(BorderFactory.createEmptyBorder(6, 3, 0, 3));
+        JLabel resultsLabel = new JLabel("Query results");
+        resultsLabel.setFont(resultsLabel.getFont().deriveFont(Font.BOLD));
+        resultsPanel.add(resultsLabel, BorderLayout.NORTH);
         resultsList = new ResultsList(getOWLEditorKit());
         resultsPanel.add(ComponentFactory.createScrollPane(resultsList));
         return resultsPanel;
@@ -345,17 +390,13 @@ public class OWLClassExpressionEditorViewComponent extends AbstractOWLViewCompon
     private void doAdd() {
         try {
             OWLClassExpression desc = owlDescriptionEditor.createObject();
-            OWLEntityCreationSet<OWLClass> creationSet = CreateDefinedClassPanel.showDialog(desc, getOWLEditorKit());
-            if (creationSet != null) {
-                List<OWLOntologyChange> changes = new ArrayList<>(creationSet.getOntologyChanges());
-                OWLDataFactory factory = getOWLModelManager().getOWLDataFactory();
-                OWLAxiom equiv = factory.getOWLEquivalentClassesAxiom(creationSet.getOWLEntity(), desc);
-                changes.add(new AddAxiom(getOWLModelManager().getActiveOntology(), equiv));
-                getOWLModelManager().applyChanges(changes);
-                if (isSynchronizing()) {
-                    getOWLEditorKit().getOWLWorkspace().getOWLSelectionModel().setSelectedEntity(creationSet.getOWLEntity());
-                }
-            }
+            CreateDefinedClassPanel.showDialogForDefinedClass(desc, getOWLEditorKit())
+                    .ifPresent(creationSet -> {
+                        getOWLModelManager().applyChanges(creationSet.getOntologyChanges());
+                        if (isSynchronizing()) {
+                            getOWLEditorKit().getOWLWorkspace().getOWLSelectionModel().setSelectedEntity(creationSet.getOWLEntity());
+                        }
+                    });
         } catch (OWLException e) {
             logger.error(marker, "An error occurred whilst adding the class definition: {}", e.getMessage(), e);
         }

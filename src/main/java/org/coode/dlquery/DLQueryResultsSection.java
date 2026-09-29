@@ -2,7 +2,7 @@ package org.coode.dlquery;
 
 import org.protege.editor.core.ui.list.MListSectionHeader;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.requireNonNull;
 /*
  * Copyright (C) 2007, University of Manchester
  *
@@ -39,7 +39,7 @@ public class DLQueryResultsSection implements MListSectionHeader {
 
 
     public DLQueryResultsSection(String label) {
-        this.label = checkNotNull(label);
+        this.label = requireNonNull(label);
     }
 
 
