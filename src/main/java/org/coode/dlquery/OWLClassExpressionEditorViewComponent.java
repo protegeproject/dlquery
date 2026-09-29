@@ -144,8 +144,10 @@ public class OWLClassExpressionEditorViewComponent extends AbstractOWLViewCompon
 
         editorPanel.add(ComponentFactory.createScrollPane(owlDescriptionEditor), BorderLayout.CENTER);
         JPanel buttonHolder = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        executeButton.setToolTipText("Run the query using the active reasoner");
         executeButton.addActionListener(e -> doQuery());
 
+        addButton.setToolTipText("Create a named class equivalent to this expression");
         addButton.addActionListener(e -> doAdd());
 
         buttonHolder.add(executeButton);
