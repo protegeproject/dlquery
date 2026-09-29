@@ -79,7 +79,7 @@ public class OWLClassExpressionEditorViewComponent extends AbstractOWLViewCompon
 
     private final JButton executeButton = new JButton("Execute");
 
-    private final JButton addButton = new JButton("Add to ontology");
+    private final JButton addButton = new JButton("Add to ontology…");
 
     private final OWLModelManagerListener listener = event -> {
         if (event.isType(EventType.ONTOLOGY_CLASSIFIED)) {
